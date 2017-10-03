@@ -1,7 +1,6 @@
 package cos30018.assignment.json;
 
 import com.google.gson.Gson;
-import jade.imtp.leap.http.HTTPRequest;
 
 /**
  * Provides a Gson object for JSON parsing.
