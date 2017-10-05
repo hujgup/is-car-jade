@@ -5,6 +5,18 @@ package cos30018.assignment.http;
  * 
  * @author Jake
  */
+public enum Method {
+	GET,
+	POST,
+	HEAD,
+	PUT,
+	DELETE,
+	CONNECT,
+	OPTIONS,
+	TRACE,
+	PATCH
+}
+
 public class Methods {
 	public static final String GET = "GET";
 	public static final String POST = "POST";

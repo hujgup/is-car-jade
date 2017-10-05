@@ -1,6 +1,7 @@
 package cos30018.assignment.utils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,28 +31,30 @@ public class Validate {
 	private static final String EXPECT_OUT_RANGE = "must be outside range";
 	private static final String EXPECT_IN_SET = "must be in set";
 	private static final String EXPECT_KEY_IN_MAP = "must be a key in map";
+	private static final String NOT_KEY_IN_MAP = "must not be a key in map";
+	private static final String NOT_CONTAINS_LIST = "must not be in list";
 	private Validate() {
 		// Pure static class
 	}
-	private static void throwUnary(String argVal, String argName, String details) {
+	public static void throwUnary(String argVal, String argName, String details) {
 		throw new IllegalArgumentException(argName + " " + details + " (was " + argVal + ").");
 	}
-	private static void throwUnary(Object argVal, String argName, String details) {
+	public static void throwUnary(Object argVal, String argName, String details) {
 		throwUnary(argVal.toString(), argName, details);
 	}
-	private static void throwUnary(double argVal, String argName, String details) {
+	public static void throwUnary(double argVal, String argName, String details) {
 		throwUnary(Double.toString(argVal), argName, details);
 	}
-	private static void throwBinary(String aVal, String bVal, String aName, String bName, String details) {
+	public static void throwBinary(String aVal, String bVal, String aName, String bName, String details) {
 		throw new IllegalArgumentException(aName + " " + details + " " + bName + " (were " + aVal + " and " + bVal + " respectively).");
 	}
-	private static void throwBinary(Object aVal, Object bVal, String aName, String bName, String details) {
+	public static void throwBinary(Object aVal, Object bVal, String aName, String bName, String details) {
 		throwBinary(aVal.toString(), bVal.toString(), aName, bName, details);
 	}
-	private static void throwBinary(String aVal, String bVal, String aName, String details) {
+	public static void throwBinary(String aVal, String bVal, String aName, String details) {
 		throw new IllegalArgumentException(aName + " " + details + " " + bVal + " (was " + aVal + ").");
 	}
-	private static void throwBinary(Object aVal, Object bVal, String aName, String details) {
+	public static void throwBinary(Object aVal, Object bVal, String aName, String details) {
 		throwBinary(aVal.toString(), bVal.toString(), aName, details);
 	}
 	/**
@@ -431,6 +434,56 @@ public class Validate {
 	public static <T> void keyInMap(T arg, Map<? extends T, ?> map, String argName) {
 		if (!map.containsKey(arg)) {
 			throwBinary(arg, map, argName, EXPECT_KEY_IN_MAP);
+		}
+	}
+	/**
+	 * Makes sure that arg is not a key in the specified map.
+	 * 
+	 * @param arg The arg to check.
+	 * @param map The map that arg should not be a key in.
+	 * @param argName The name of the arg.
+	 * @param mapName The name of the map.
+	 */
+	public static <T> void keyNotInMap(T arg, Map<? extends T, ?> map, String argName, String mapName) {
+		if (map.containsKey(arg)) {
+			throwBinary(arg, map, argName, mapName, NOT_KEY_IN_MAP);
+		}
+	}
+	/**
+	 * Makes sure that arg is not a key in the specified map.
+	 * 
+	 * @param arg The arg to check.
+	 * @param map The map that arg should not be a key in.
+	 * @param argName The name of the arg.
+	 */
+	public static <T> void keyNotInMap(T arg, Map<? extends T, ?> map, String argName) {
+		if (map.containsKey(arg)) {
+			throwBinary(arg, map, argName, NOT_KEY_IN_MAP);
+		}
+	}
+	/**
+	 * Makes sure that arg is not in the specified list.
+	 * 
+	 * @param arg The arg to check.
+	 * @param list The list that arg should not be in.
+	 * @param argName The name of the arg.
+	 * @param listName The name of the list.
+	 */
+	public static <T> void listNotContains(T arg, List<? extends T> list, String argName, String listName) {
+		if (list.contains(arg)) {
+			throwBinary(arg, list, argName, listName, NOT_CONTAINS_LIST);
+		}
+	}
+	/**
+	 * Makes sure that arg is not in the specified list.
+	 * 
+	 * @param arg The arg to check.
+	 * @param list The list that arg should not be in.
+	 * @param argName The name of the arg.
+	 */
+	public static <T> void listNotContains(T arg, List<? extends T> list, String argName) {
+		if (list.contains(arg)) {
+			throwBinary(arg, list, argName, NOT_CONTAINS_LIST);
 		}
 	}
 }

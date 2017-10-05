@@ -1,5 +1,7 @@
 package cos30018.assignment.http;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -188,6 +190,22 @@ public class Response {
 		public Response build() {
 			return new Response(bVersion, bStatus, bStatusText, bHeaders, bBody.toString());
 		}
+		/**
+		 * Builds a Response from this builder and echoes said response to the specified output stream.
+		 * 
+		 * @param out The output stream to echo to.
+		 */
+		public void echo(PrintStream out) {
+			build().echo(out);
+		}
+		/**
+		 * Builds a Response from this builder and echoes said response to the specified output stream.
+		 * 
+		 * @param out The output stream to echo to.
+		 */
+		public void echo(OutputStream out) {
+			build().echo(out);
+		}
 	}
 	
 	private String version;
@@ -243,6 +261,22 @@ public class Response {
 	 */
 	public String getBody() {
 		return body;
+	}
+	/**
+	 * Echoes this response to the specified output stream.
+	 * 
+	 * @param out The output stream to echo to.
+	 */
+	public void echo(PrintStream out) {
+		out.print(toString());
+	}
+	/**
+	 * Echoes this response to the specified output stream.
+	 * 
+	 * @param out The output stream to echo to.
+	 */
+	public void echo(OutputStream out) {
+		echo(new PrintStream(out));
 	}
 	@Override
 	public String toString() {

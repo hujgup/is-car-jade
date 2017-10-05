@@ -2,6 +2,7 @@ package cos30018.assignment.data;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import cos30018.assignment.utils.Validate;
@@ -12,6 +13,7 @@ import cos30018.assignment.utils.Validate;
  * @author Jake
  */
 public class SystemData {
+	private boolean isDummy;
 	private double maxGridLoad;
 	private HashMap<CarID, Car> cars;
 	private Timetable timetable;
@@ -32,11 +34,36 @@ public class SystemData {
 			i++;
 		}
 		timetable = new Timetable();
+		isDummy = false;
+	}
+	public SystemData(double maxGridLoad, Car... cars) {
+		this(maxGridLoad, toSet(cars));
+	}
+	public static SystemData createDummyData() {
+		SystemData res = new SystemData(Double.MIN_VALUE);
+		res.isDummy = true;
+		return res;
+	}
+	private static Set<Car> toSet(Car[] cars) {
+		Set<Car> res = new HashSet<>();
+		for (int i = 0; i < cars.length; i++) {
+			if (!res.add(cars[i])) {
+				throw new IllegalArgumentException("Array of cars cannot be mapped to aset because it contains duplicates.");
+			}
+		}
+		return res;
 	}
 	private void setMaxGridLoad(double value, String argName) {
 		Validate.finite(value, argName);
 		Validate.positive(value, argName);
 		maxGridLoad = value;
+		isDummy = false;
+	}
+	/**
+	 * @return True if this object was created using createDummyData() and has not been mutated since then.
+	 */
+	public boolean isDummy() {
+		return isDummy;
 	}
 	/**
 	 * @return The maximum load on the electric grid at any one time.
@@ -69,6 +96,20 @@ public class SystemData {
 	 */
 	public Car getCar(CarID id) {
 		return cars.get(id);
+	}
+	/**
+	 * Adds the specified car to the environment.
+	 * 
+	 * @param car The car to add.
+	 * @return True if the car was added, false if that car is already in this environment.
+	 */
+	public boolean addCar(Car car) {
+		boolean res = !hasCar(car.getOwner());
+		if (res) {
+			cars.put(car.getOwner(), car);
+			isDummy = false;			
+		}
+		return res;
 	}
 	/**
 	 * Removes a car from this environment.

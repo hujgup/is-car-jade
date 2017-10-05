@@ -139,6 +139,8 @@ public class Timetable implements Serializable {
 		}
 		return res;
 	}
+	// TODO: rename to addEntry
+	// TODO: removeEntry
 	/**
 	 * @return A filter object for filtering entries.
 	 */

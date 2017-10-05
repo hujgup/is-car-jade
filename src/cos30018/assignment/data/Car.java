@@ -1,5 +1,6 @@
 package cos30018.assignment.data;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import cos30018.assignment.utils.LocalTimeRange;
@@ -24,13 +25,14 @@ public class Car implements ImmutableCar {
 	private double chargePerHour;
 	private List<LocalTimeRange> unavailableTimes;
 	private int negotiationOrder;
+	// TODO: JavaDoc
 	/**
 	 * Creates a new car.
 	 * 
 	 * @param owner The ID of the agents that own this car.
 	 * @param load The electrical load this car will draw when charging.
 	 */
-	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, List<LocalTimeRange> unavailableTimes, int negotiationOrder) {
+	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, int negotiationOrder, List<LocalTimeRange> unavailableTimes) {
 		Validate.notNull(owner, "owner");
 		this.owner = owner;
 		setCurrentCharge(currentCharge, "currentCharge");
@@ -38,6 +40,9 @@ public class Car implements ImmutableCar {
 		setChargePerHour(chargePerHour, "chargePerHour");
 		setUnavailableTimes(unavailableTimes, "unavailableTimes");
 		setNegotiationOrder(negotiationOrder);
+	}
+	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, int negotiationOrder, LocalTimeRange... unavailableTimes) {
+		this(owner, currentCharge, chargeCapacity, chargePerHour, negotiationOrder, Arrays.asList(unavailableTimes));
 	}
 	private void setCurrentCharge(double value, String argName) {
 		Validate.finite(value, argName);

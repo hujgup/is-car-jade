@@ -73,3 +73,7 @@ local.properties
 # Locally stored "Eclipse launch configurations"
 *.launch
 
+APDescription.txt
+MTPs-Main-Container.txt
+
+
