@@ -10,7 +10,7 @@ public class CarAgent extends Agent {
 	public void setup() {
 		SystemData data = SystemData.createDummyData();
 		try {
-			addBehaviour(new SocketBehaviour(data, 8080));
+			addBehaviour(new UpdateServerBehaviour(data, 8080));
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
