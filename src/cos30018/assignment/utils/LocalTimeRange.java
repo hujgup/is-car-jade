@@ -1,6 +1,8 @@
 package cos30018.assignment.utils;
 
 import java.time.LocalTime;
+import cos30018.assignment.json.LocalTimeBoundJson;
+import cos30018.assignment.json.LocalTimeRangeJson;
 
 /**
  * Represents a range of LocalTimes.
@@ -121,5 +123,13 @@ public class LocalTimeRange implements Range<LocalTimeRange, LocalTime> {
 	@Override
 	public String toString() {
 		return Range.toString(this);
+	}
+	/**
+	 * @return This object as an object that can be converted to JSON.
+	 */
+	public LocalTimeRangeJson toJson() {
+		LocalTimeBoundJson lowJson = new LocalTimeBoundJson(low.getPivot(), low.isInclusive());
+		LocalTimeBoundJson highJson = new LocalTimeBoundJson(high.getPivot(), high.isInclusive());
+		return new LocalTimeRangeJson(lowJson, highJson);
 	}
 }

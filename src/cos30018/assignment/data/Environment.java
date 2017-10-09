@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import cos30018.assignment.json.JsonData;
 import cos30018.assignment.utils.Validate;
 
 /**
@@ -12,18 +13,18 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class SystemData {
+public class Environment {
 	private boolean isDummy;
 	private double maxGridLoad;
 	private HashMap<CarID, Car> cars;
 	private Timetable timetable;
 	/**
-	 * Creates a new SystemData object.
+	 * Creates a new Environment.
 	 * 
 	 * @param maxGridLoad The maximum load on the electric grid at any one time.
 	 * @param cars The set of cars in this environment.
 	 */
-	public SystemData(double maxGridLoad, Set<Car> cars) {
+	public Environment(double maxGridLoad, Set<Car> cars) {
 		setMaxGridLoad(maxGridLoad, "maxGridLoad");
 		Validate.notNull(cars, "cars");
 		this.cars = new HashMap<>();
@@ -36,11 +37,20 @@ public class SystemData {
 		timetable = new Timetable();
 		isDummy = false;
 	}
-	public SystemData(double maxGridLoad, Car... cars) {
+	/**
+	 * Creates a new Environment.
+	 * 
+	 * @param maxGridLoad The maximum load on the electric grid at any one time.
+	 * @param cars The set of cars in this environment.
+	 */
+	public Environment(double maxGridLoad, Car... cars) {
 		this(maxGridLoad, toSet(cars));
 	}
-	public static SystemData createDummyData() {
-		SystemData res = new SystemData(Double.MIN_VALUE);
+	/**
+	 * @return An Environment that contains placeholder data.
+	 */
+	public static Environment createDummyData() {
+		Environment res = new Environment(Double.MIN_VALUE);
 		res.isDummy = true;
 		return res;
 	}
@@ -131,5 +141,25 @@ public class SystemData {
 	 */
 	public Timetable getTimetable() {
 		return timetable;
+	}
+	/**
+	 * @param withCar The car to union with.
+	 * @return This object as an object that can be converted to JSON, unioned with withCar.toJson().
+	 */
+	public JsonData toJson(Car withCar) {
+		return JsonData.createConstraintUpdate(maxGridLoad, withCar.getCurrentCharge(), withCar.getChargeCapacity(), withCar.getChargePerHour(), withCar.getUnavailableTimes());
+	}
+	/**
+	 * @param withCar The ID of the car to union with.
+	 * @return This object as an object that can be converted to JSON, unioned with withCar.toJson().
+	 */
+	public JsonData toJson(CarID withCar) {
+		return toJson(getCar(withCar));
+	}
+	/**
+	 * @return This object as an object that can be converted to JSON.
+	 */
+	public JsonData toJson() {
+		return JsonData.createConstraintUpdate(maxGridLoad, null, null, null, null);
 	}
 }

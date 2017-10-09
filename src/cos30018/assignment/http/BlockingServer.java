@@ -7,7 +7,17 @@ import java.util.Queue;
 import java.util.concurrent.Semaphore;
 import fi.iki.elonen.NanoHTTPD;
 
+/**
+ * An HTTP server that blocks until a request exists.
+ * 
+ * @author Jake
+ */
 public interface BlockingServer {
+	/**
+	 * The BlockingServer implementation. Exists to hide some methods.
+	 * 
+	 * @author Jake
+	 */
 	static class Implementation extends NanoHTTPD implements BlockingServer {
 		private Queue<BlockingRequest> requests;
 		private Semaphore mutateSem;
@@ -50,7 +60,19 @@ public interface BlockingServer {
 		}
 	}
 	
+	/**
+	 * Blocks the current thread until a request exists, then returns it.
+	 * 
+	 * @return The request.
+	 */
 	BlockingRequest block();
+	/**
+	 * Creates a new BlockingServer.
+	 * 
+	 * @param port The port the server should listen to.
+	 * @return A new BlockingServer.
+	 * @throws IOException If the server was unable to be started.
+	 */
 	static BlockingServer create(int port) throws IOException {
 		return new Implementation(port);
 	}

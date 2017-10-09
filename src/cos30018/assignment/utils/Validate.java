@@ -36,24 +36,79 @@ public class Validate {
 	private Validate() {
 		// Pure static class
 	}
+	/**
+	 * Throws a validation error derived from one value.
+	 * 
+	 * @param argVal The value that caused the error.
+	 * @param argName The name of the variable that caused the error.
+	 * @param details The details of the error.
+	 */
 	public static void throwUnary(String argVal, String argName, String details) {
 		throw new IllegalArgumentException(argName + " " + details + " (was " + argVal + ").");
 	}
+	/**
+	 * Throws a validation error derived from one value.
+	 * 
+	 * @param argVal The value that caused the error.
+	 * @param argName The name of the variable that caused the error.
+	 * @param details The details of the error.
+	 */
 	public static void throwUnary(Object argVal, String argName, String details) {
 		throwUnary(argVal.toString(), argName, details);
 	}
+	/**
+	 * Throws a validation error derived from one value.
+	 * 
+	 * @param argVal The value that caused the error.
+	 * @param argName The name of the variable that caused the error.
+	 * @param details The details of the error.
+	 */
 	public static void throwUnary(double argVal, String argName, String details) {
 		throwUnary(Double.toString(argVal), argName, details);
 	}
+	/**
+	 * Throws a validation error derived from how two values are related.
+	 * 
+	 * @param aVal The first value that caused the error.
+	 * @param bVal The second value that caused the error.
+	 * @param aName The name of the first variable that caused the error.
+	 * @param bName The name of the second variable that caused the error.
+	 * @param details The details of the error.
+	 */
 	public static void throwBinary(String aVal, String bVal, String aName, String bName, String details) {
 		throw new IllegalArgumentException(aName + " " + details + " " + bName + " (were " + aVal + " and " + bVal + " respectively).");
 	}
+	/**
+	 * Throws a validation error derived from how two values are related.
+	 * 
+	 * @param aVal The first value that caused the error.
+	 * @param bVal The second value that caused the error.
+	 * @param aName The name of the first variable that caused the error.
+	 * @param bName The name of the second variable that caused the error.
+	 * @param details The details of the error.
+	 */
 	public static void throwBinary(Object aVal, Object bVal, String aName, String bName, String details) {
 		throwBinary(aVal.toString(), bVal.toString(), aName, bName, details);
 	}
+	/**
+	 * Throws a validation error derived from how two values are related, where one value is a constant.
+	 * 
+	 * @param aVal The variable value that caused the error.
+	 * @param bVal The constant value whose relation to aVal caused the error.
+	 * @param aName The name of the variable that caused the error.
+	 * @param details The details of the error.
+	 */
 	public static void throwBinary(String aVal, String bVal, String aName, String details) {
 		throw new IllegalArgumentException(aName + " " + details + " " + bVal + " (was " + aVal + ").");
 	}
+	/**
+	 * Throws a validation error derived from how two values are related, where one value is a constant.
+	 * 
+	 * @param aVal The variable value that caused the error.
+	 * @param bVal The constant value whose relation to aVal caused the error.
+	 * @param aName The name of the variable that caused the error.
+	 * @param details The details of the error.
+	 */
 	public static void throwBinary(Object aVal, Object bVal, String aName, String details) {
 		throwBinary(aVal.toString(), bVal.toString(), aName, details);
 	}

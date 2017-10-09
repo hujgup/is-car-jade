@@ -46,6 +46,12 @@ public class CarID {
 			return res;
 		}
 	}
+	/**
+	 * Gets an existing CarID from its integral ID value.
+	 * 
+	 * @param id The integral ID value.
+	 * @return The CarID corresponding to id, or null if none exists.
+	 */
 	public static CarID fromID(int id) {
 		return carIds.get(id);
 	}

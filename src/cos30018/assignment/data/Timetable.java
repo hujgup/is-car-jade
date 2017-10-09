@@ -105,8 +105,12 @@ public class Timetable implements Serializable {
 	 */
 	public Timetable(Iterable<TimetableEntry> entries) {
 		this();
+		Validate.notNull(entries, "entries");
+		int i = 0;
 		for (TimetableEntry entry : entries) {
+			Validate.notNull(entry, "entries[" + i + "]");
 			this.entries.add(entry);
+			i++;
 		}
 	}
 	/**
@@ -127,7 +131,8 @@ public class Timetable implements Serializable {
 	 * @param entry The entry to add.
 	 * @return An AddResult describing whether the addition was a success, and if it was not, what was wrong with the specified entry that prevented it from being added.
 	 */
-	public AddResult add(TimetableEntry entry) {
+	public AddResult addEntry(TimetableEntry entry) {
+		Validate.notNull(entry, "entry");
 		AddResult res;
 		if (entries.isEmpty() || filter().byOwner(entry.getCar().getOwner()).overlapsTimeRange(entry.getTimeRange()).isEmpty()) {
 			// Filter is checking if there's another entry for the arg entry's car whose slot overlaps the arg entry's slot
@@ -139,8 +144,16 @@ public class Timetable implements Serializable {
 		}
 		return res;
 	}
-	// TODO: rename to addEntry
-	// TODO: removeEntry
+	/**
+	 * Attempts to remove an entry from this timetable.
+	 * 
+	 * @param entry The entry to remove.
+	 * @return True if the entry exists and was removed.
+	 */
+	public boolean removeEntry(TimetableEntry entry) {
+		Validate.notNull(entry, "entry");
+		return entries.remove(entry);
+	}
 	/**
 	 * @return A filter object for filtering entries.
 	 */

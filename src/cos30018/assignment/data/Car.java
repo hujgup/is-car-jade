@@ -3,6 +3,7 @@ package cos30018.assignment.data;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import cos30018.assignment.json.JsonData;
 import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.Validate;
 
@@ -16,33 +17,42 @@ public class Car implements ImmutableCar {
 	// 1. Add getters and setters to this object.
 	// 2. Add the getter method to the ImmutableCar interface
 	// 3. Consider whether it needs to be added to the Timetable.AddResult enum and the Timetable add method logic.
-	// 4. Add a corresponding field to ClientRequest.
-	// 5. Add an updateField call for the field in ClientRequest to the ClientRequest update method.
-	// 6. Update constraint negotiation to consider it.
+	// 4. Update JsonData so that it uses it.
+	// 5. Update constraint negotiation to consider it.
 	private CarID owner;
 	private double currentCharge;
 	private double chargeCapacity;
 	private double chargePerHour;
 	private List<LocalTimeRange> unavailableTimes;
 	private int negotiationOrder;
-	// TODO: JavaDoc
 	/**
 	 * Creates a new car.
 	 * 
 	 * @param owner The ID of the agents that own this car.
-	 * @param load The electrical load this car will draw when charging.
+	 * @param currentCharge The initial charge level of this car.
+	 * @param chargeCapacity The maximum amount of charge this car can hold.
+	 * @param chargePerHour The amount of charge this car can gain per hour while charging (controls charge rate).
+	 * @param unavailableTimes The set of times that this car cannot charge in, e.g. if it is being used to drive to work.
 	 */
-	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, int negotiationOrder, List<LocalTimeRange> unavailableTimes) {
+	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, List<LocalTimeRange> unavailableTimes) {
 		Validate.notNull(owner, "owner");
 		this.owner = owner;
 		setCurrentCharge(currentCharge, "currentCharge");
 		setChargeCapacity(chargeCapacity, "chargeCapacity");
 		setChargePerHour(chargePerHour, "chargePerHour");
 		setUnavailableTimes(unavailableTimes, "unavailableTimes");
-		setNegotiationOrder(negotiationOrder);
 	}
-	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, int negotiationOrder, LocalTimeRange... unavailableTimes) {
-		this(owner, currentCharge, chargeCapacity, chargePerHour, negotiationOrder, Arrays.asList(unavailableTimes));
+	/**
+	 * Creates a new car.
+	 * 
+	 * @param owner The ID of the agents that own this car.
+	 * @param currentCharge The initial charge level of this car.
+	 * @param chargeCapacity The maximum amount of charge this car can hold.
+	 * @param chargePerHour The amount of charge this car can gain per hour while charging (controls charge rate).
+	 * @param unavailableTimes The set of times that this car cannot charge in, e.g. if it is being used to drive to work.
+	 */
+	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, LocalTimeRange... unavailableTimes) {
+		this(owner, currentCharge, chargeCapacity, chargePerHour, Arrays.asList(unavailableTimes));
 	}
 	private void setCurrentCharge(double value, String argName) {
 		Validate.finite(value, argName);
@@ -123,14 +133,12 @@ public class Car implements ImmutableCar {
 	}
 	@Override
 	public int getNegotiationOrder() {
-		return negotiationOrder;
+		return owner.getID();
 	}
 	/**
-	 * Sets the intrinsic negotiation order of this car.
-	 * 
-	 * @param value The negotiation order.
+	 * @return This object as an object that can be converted to JSON.
 	 */
-	public void setNegotiationOrder(int value) {
-		negotiationOrder = value;
+	public JsonData toJson() {
+		return JsonData.createConstraintUpdate(null, currentCharge, chargeCapacity, chargePerHour, unavailableTimes);
 	}
 }
