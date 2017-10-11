@@ -1,8 +1,8 @@
 package cos30018.assignment.utils;
 
 import java.time.LocalTime;
-import cos30018.assignment.json.LocalTimeBoundJson;
-import cos30018.assignment.json.LocalTimeRangeJson;
+import cos30018.assignment.ui.json.LocalTimeBoundJson;
+import cos30018.assignment.ui.json.LocalTimeRangeJson;
 
 /**
  * Represents a range of LocalTimes.

@@ -1,4 +1,4 @@
-package cos30018.assignment.http;
+package cos30018.assignment.ui.http;
 
 import java.io.InputStream;
 import cos30018.assignment.utils.Validate;

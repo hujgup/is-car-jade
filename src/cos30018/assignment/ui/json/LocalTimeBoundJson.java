@@ -1,4 +1,4 @@
-package cos30018.assignment.json;
+package cos30018.assignment.ui.json;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

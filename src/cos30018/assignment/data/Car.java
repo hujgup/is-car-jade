@@ -3,7 +3,7 @@ package cos30018.assignment.data;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import cos30018.assignment.json.JsonData;
+import cos30018.assignment.ui.json.JsonData;
 import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.Validate;
 

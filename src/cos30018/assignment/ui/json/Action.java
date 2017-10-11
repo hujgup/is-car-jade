@@ -1,4 +1,4 @@
-package cos30018.assignment.json;
+package cos30018.assignment.ui.json;
 
 import com.google.gson.annotations.SerializedName;
 

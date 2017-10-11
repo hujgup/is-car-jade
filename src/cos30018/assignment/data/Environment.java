@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import cos30018.assignment.json.JsonData;
+import cos30018.assignment.ui.json.JsonData;
 import cos30018.assignment.utils.Validate;
 
 /**

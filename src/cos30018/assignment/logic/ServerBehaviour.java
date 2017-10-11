@@ -1,9 +1,9 @@
 package cos30018.assignment.logic;
 
 import java.io.IOException;
-import cos30018.assignment.http.BlockingRequest;
-import cos30018.assignment.http.BlockingServer;
-import cos30018.assignment.http.Responder;
+import cos30018.assignment.ui.http.BlockingRequest;
+import cos30018.assignment.ui.http.BlockingServer;
+import cos30018.assignment.ui.http.Responder;
 import cos30018.assignment.utils.Validate;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import jade.core.behaviours.CyclicBehaviour;
