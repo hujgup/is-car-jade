@@ -23,44 +23,6 @@ import cos30018.assignment.utils.LocalTimeRange;
  * @author Jake
  */
 public class JsonData {
-	public static class Deserializer implements JsonDeserializer<JsonData> {
-		private Double optd(JsonObject obj, String key) {
-			return obj.has(key) ? obj.get(key).getAsDouble() : null;
-		}
-		@Override
-		public JsonData deserialize(JsonElement ele, Type type, JsonDeserializationContext ctx) throws JsonParseException {
-			JsonObject obj = ele.getAsJsonObject();
-			JsonData res = new JsonData();
-			if (obj.has("action")) {
-				switch (obj.get("action").getAsString()) {
-					case "constraints":
-						res.action = Action.UPDATE_CONSTRAINTS;
-						break;
-					case "negotiate":
-						res.action = Action.FORCE_NEGOTIATE;
-						break;
-					default:
-						throw new JsonParseException("Invalid enum value.");
-				}
-				res.maxGridLoad = optd(obj, "maxGridLoad");
-				res.currentCharge = optd(obj, "currentCharge");
-				res.chargeCapacity = optd(obj, "chargeCapacity");
-				res.chargePerHour = optd(obj, "chargePerHour");
-				if (obj.has("unavailableTimes")) {
-					res.unavailableTimes = new ArrayList<>();
-					for (JsonElement utJson : obj.get("unavailableTimes").getAsJsonArray()) {
-						res.unavailableTimes.add((LocalTimeRangeJson)ctx.deserialize(utJson, LocalTimeRangeJson.class));
-					}
-				} else {
-					res.unavailableTimes = null;
-				}
-			} else {
-				throw new JsonParseException("Invalid structure: not an object.");
-			}
-			return res;
-		}
-	}
-	
 	private static enum SpecType {
 		EMPTY,
 		ACTION,
@@ -269,6 +231,12 @@ public class JsonData {
 			throw new IllegalStateException("Invalid \"action\" value: " + action + ".");
 		}
 	}
+	/**
+	 * Updates the given environment with changes contained in this object. Values on this object that are null incicate no change.
+	 * 
+	 * @param data The environment data to change.
+	 * @param id The ID of the car to update, if this is a car constraint update.
+	 */
 	public void updateEnvironment(Environment data, CarID id) {
 		if (isConstraintUpdate()) {
 			if (getMaxGridLoad() != null) {

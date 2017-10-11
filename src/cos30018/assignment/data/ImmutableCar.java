@@ -3,6 +3,12 @@ package cos30018.assignment.data;
 import java.util.List;
 import cos30018.assignment.utils.LocalTimeRange;
 
+/**
+ * Represents a car and its associated constraints, in an immutable form.
+ * 
+ * @author Jake
+ *
+ */
 public interface ImmutableCar {
 	/**
 	 * @return The IDs of the agents that own this car.

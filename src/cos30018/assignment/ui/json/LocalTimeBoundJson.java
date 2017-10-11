@@ -38,6 +38,9 @@ public class LocalTimeBoundJson {
 	public boolean getInclusive() {
 		return inclusive;
 	}
+	/**
+	 * @return This JSON object as its corresponding Java object.
+	 */
 	public Bound<LocalTime> toObject() {
 		return new Bound<>(LocalTime.parse(pivot), inclusive);
 	}

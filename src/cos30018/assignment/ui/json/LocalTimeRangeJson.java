@@ -34,6 +34,9 @@ public class LocalTimeRangeJson {
 	public LocalTimeBoundJson getUpperBound() {
 		return upperBound;
 	}
+	/**
+	 * @return This JSON object as its corresponding Java object.
+	 */
 	public LocalTimeRange toObject() {
 		return new LocalTimeRange(lowerBound.toObject(), upperBound.toObject());
 	}
