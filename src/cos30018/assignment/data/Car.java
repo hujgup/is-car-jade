@@ -16,10 +16,11 @@ public class Car implements ImmutableCar {
 	// IMPORTANT: Every time you add a new constraint field here, remember to:
 	// 1. Add getters and setters to this object.
 	// 2. Add the getter method to the ImmutableCar interface
-	// 3. Consider whether it needs to be added to the Timetable.AddResult enum and the Timetable add method logic.
-	// 4. Update JsonData so that it uses it.
-	// 5. Update the JsonData.updateConstraints method so that it uses it
-	// 6. Update constraint negotiation to consider it.
+	// 3. Add an argument to the constructor.
+	// 4. Consider whether it needs to be added to the Timetable.AddResult enum and the Timetable add method logic.
+	// 5. Update JsonData so that it uses it.
+	// 6. Update the JsonData.updateConstraints method so that it uses it.
+	// 7. Update constraint negotiation to consider it.
 	private CarID owner;
 	private double currentCharge;
 	private double chargeCapacity;
@@ -61,7 +62,7 @@ public class Car implements ImmutableCar {
 	}
 	private void setChargeCapacity(double value, String argName) {
 		Validate.finite(value, argName);
-		Validate.notNegative(value, argName);
+		Validate.positive(value, argName);
 		Validate.greaterThanOrEqualTo(value, currentCharge, argName);
 		chargeCapacity = value;
 	}
