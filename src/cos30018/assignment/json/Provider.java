@@ -1,6 +1,7 @@
 package cos30018.assignment.json;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Provides a Gson object for JSON parsing.

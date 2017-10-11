@@ -18,13 +18,13 @@ public class Car implements ImmutableCar {
 	// 2. Add the getter method to the ImmutableCar interface
 	// 3. Consider whether it needs to be added to the Timetable.AddResult enum and the Timetable add method logic.
 	// 4. Update JsonData so that it uses it.
-	// 5. Update constraint negotiation to consider it.
+	// 5. Update the JsonData.updateConstraints method so that it uses it
+	// 6. Update constraint negotiation to consider it.
 	private CarID owner;
 	private double currentCharge;
 	private double chargeCapacity;
 	private double chargePerHour;
 	private List<LocalTimeRange> unavailableTimes;
-	private int negotiationOrder;
 	/**
 	 * Creates a new car.
 	 * 
@@ -105,7 +105,7 @@ public class Car implements ImmutableCar {
 	 * @param value The charge capacity.
 	 */
 	public void setChargeCapacity(double value) {
-		setCurrentCharge(value, "value");
+		setChargeCapacity(value, "value");
 	}
 	@Override
 	public double getChargePerHour() {

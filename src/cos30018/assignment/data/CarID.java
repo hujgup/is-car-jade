@@ -11,7 +11,6 @@ import jade.core.AID;
  * @author Jake
  */
 public class CarID {
-	private static int nextId = 0;
 	private static HashMap<AID, Integer> ids = new HashMap<>();
 	private static LinkedList<AID> schedulers = new LinkedList<>();
 	private static HashMap<Integer, CarID> carIds = new HashMap<>();
@@ -37,14 +36,12 @@ public class CarID {
 		Validate.notNull(schedulerAgent, "schedulerAgent");
 		Validate.keyNotInMap(carAgent, ids, "carAgent");
 		Validate.listNotContains(schedulerAgent, schedulers, "schedulerAgent");
-		synchronized (ids) {
-			int id = nextId++;
-			ids.put(carAgent, id);
-			schedulers.add(schedulerAgent);
-			CarID res = new CarID(id, carAgent, schedulerAgent);
-			carIds.put(id, res);
-			return res;
-		}
+		int id = (int)(Math.random()*20000) + 8080;
+		ids.put(carAgent, id);
+		schedulers.add(schedulerAgent);
+		CarID res = new CarID(id, carAgent, schedulerAgent);
+		carIds.put(id, res);
+		return res;
 	}
 	/**
 	 * Gets an existing CarID from its integral ID value.

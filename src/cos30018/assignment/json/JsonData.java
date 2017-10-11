@@ -1,8 +1,20 @@
 package cos30018.assignment.json;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import cos30018.assignment.data.Car;
+import cos30018.assignment.data.CarID;
+import cos30018.assignment.data.Environment;
 import cos30018.assignment.utils.LocalTimeRange;
 
 /**
@@ -11,12 +23,50 @@ import cos30018.assignment.utils.LocalTimeRange;
  * @author Jake
  */
 public class JsonData {
+	public static class Deserializer implements JsonDeserializer<JsonData> {
+		private Double optd(JsonObject obj, String key) {
+			return obj.has(key) ? obj.get(key).getAsDouble() : null;
+		}
+		@Override
+		public JsonData deserialize(JsonElement ele, Type type, JsonDeserializationContext ctx) throws JsonParseException {
+			JsonObject obj = ele.getAsJsonObject();
+			JsonData res = new JsonData();
+			if (obj.has("action")) {
+				switch (obj.get("action").getAsString()) {
+					case "constraints":
+						res.action = Action.UPDATE_CONSTRAINTS;
+						break;
+					case "negotiate":
+						res.action = Action.FORCE_NEGOTIATE;
+						break;
+					default:
+						throw new JsonParseException("Invalid enum value.");
+				}
+				res.maxGridLoad = optd(obj, "maxGridLoad");
+				res.currentCharge = optd(obj, "currentCharge");
+				res.chargeCapacity = optd(obj, "chargeCapacity");
+				res.chargePerHour = optd(obj, "chargePerHour");
+				if (obj.has("unavailableTimes")) {
+					res.unavailableTimes = new ArrayList<>();
+					for (JsonElement utJson : obj.get("unavailableTimes").getAsJsonArray()) {
+						res.unavailableTimes.add((LocalTimeRangeJson)ctx.deserialize(utJson, LocalTimeRangeJson.class));
+					}
+				} else {
+					res.unavailableTimes = null;
+				}
+			} else {
+				throw new JsonParseException("Invalid structure: not an object.");
+			}
+			return res;
+		}
+	}
+	
 	private static enum SpecType {
 		EMPTY,
 		ACTION,
 		U_TIMES,
 		NEW_CAR
-	}
+	}	
 	
 	private static final Pattern TIME_REGEX = Pattern.compile("(?:[01]\\d|2[0-3])(?:\\:[0-5]\\d){1,2}");
 	private Action action;
@@ -169,7 +219,8 @@ public class JsonData {
 	 * 
 	 * @param isNew True if this data specifies a new car.
 	 */
-	public void validate(boolean isNew) {
+	public void validate(Environment data, CarID id) {
+		boolean isNew = !data.hasCar(id);
 		mustSpecify(action, "action", SpecType.EMPTY);
 		if (isConstraintUpdate()) {
 			if (isNew) {
@@ -216,6 +267,35 @@ public class JsonData {
 			neverSpecify(unavailableTimes, "unavailableTimes");
 		} else {
 			throw new IllegalStateException("Invalid \"action\" value: " + action + ".");
+		}
+	}
+	public void updateEnvironment(Environment data, CarID id) {
+		if (isConstraintUpdate()) {
+			if (getMaxGridLoad() != null) {
+				data.setMaxGridLoad(getMaxGridLoad());
+			}
+			if (isCarConstraintUpdate()) {
+				boolean isNewCar = !data.hasCar(id);
+				Car car = isNewCar ? new Car(id, 0, Double.MIN_VALUE, Double.MIN_VALUE) : data.getCar(id);
+				if (isNewCar) {
+					id = car.getOwner();
+					data.addCar(car);
+				}
+				if (getCurrentCharge() != null) {
+					car.setCurrentCharge(getCurrentCharge());
+				}
+				if (getChargeCapacity() != null) {
+					car.setChargeCapacity(getChargeCapacity());
+				}
+				if (getChargePerHour() != null) {
+					car.setChargePerHour(getChargePerHour());
+				}
+				if (getUnavailableTimes() != null) {
+					car.setUnavailableTimes(getUnavailableTimes().stream().map(x -> x.toObject()).collect(Collectors.toList()));
+				}
+			}
+		} else {
+			throw new IllegalStateException("Cannot update constraints when contained data is not a constraint update.");
 		}
 	}
 }

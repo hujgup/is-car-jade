@@ -76,6 +76,7 @@ public class Responder {
 	 */
 	public void respond(Response response) {
 		Validate.notNull(response, "response");
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		req.respond(response);
 	}
 }

@@ -2,6 +2,7 @@ package cos30018.assignment.json;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import cos30018.assignment.utils.Bound;
 import cos30018.assignment.utils.Validate;
 
 /**
@@ -36,5 +37,8 @@ public class LocalTimeBoundJson {
 	 */
 	public boolean getInclusive() {
 		return inclusive;
+	}
+	public Bound<LocalTime> toObject() {
+		return new Bound<>(LocalTime.parse(pivot), inclusive);
 	}
 }

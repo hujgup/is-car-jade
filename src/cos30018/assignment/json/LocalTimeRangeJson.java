@@ -1,5 +1,7 @@
 package cos30018.assignment.json;
 
+import cos30018.assignment.utils.LocalTimeRange;
+
 /**
  * Represents a LocalTimeRange in a JSON-convertible form.
  * 
@@ -31,5 +33,8 @@ public class LocalTimeRangeJson {
 	 */
 	public LocalTimeBoundJson getUpperBound() {
 		return upperBound;
+	}
+	public LocalTimeRange toObject() {
+		return new LocalTimeRange(lowerBound.toObject(), upperBound.toObject());
 	}
 }
