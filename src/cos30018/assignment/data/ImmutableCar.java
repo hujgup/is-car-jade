@@ -9,7 +9,7 @@ import cos30018.assignment.utils.LocalTimeRange;
  * @author Jake
  *
  */
-public interface ImmutableCar {
+public interface ImmutableCar extends Comparable<ImmutableCar> {
 	/**
 	 * @return The IDs of the agents that own this car.
 	 */
@@ -34,4 +34,7 @@ public interface ImmutableCar {
 	 * @return The intrinsic negotiation order.
 	 */
 	int getNegotiationOrder();
+	default int compareTo(ImmutableCar other) {
+		return Integer.compare(getNegotiationOrder(), other.getNegotiationOrder());
+	}
 }
