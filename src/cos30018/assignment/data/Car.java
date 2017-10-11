@@ -18,13 +18,13 @@ public class Car implements ImmutableCar {
 	// 2. Add the getter method to the ImmutableCar interface
 	// 3. Add an argument to the constructor.
 	// 4. Consider whether it needs to be added to the Timetable.AddResult enum and the Timetable add method logic.
-	// 5. Update JsonData so that it uses it.
-	// 6. Update the JsonData.updateConstraints method so that it uses it.
-	// 7. Update constraint negotiation to consider it.
+	// 5. Tell Jake about it so that he can update the JsonData object + its updateConstraints method.
+	// 6. Update constraint negotiation to consider it.
 	private CarID owner;
 	private double currentCharge;
 	private double chargeCapacity;
 	private double chargePerHour;
+	// TODO: private double chargeDrainRate
 	private List<LocalTimeRange> unavailableTimes;
 	/**
 	 * Creates a new car.
