@@ -10,8 +10,8 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-@SuppressWarnings("serial")
 public class TimetableEntry implements Serializable {
+	private static final long serialVersionUID = 8041101655729567522L;
 	private Car car;
 	private LocalTimeRange range;
 	/**

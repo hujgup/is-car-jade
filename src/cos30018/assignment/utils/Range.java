@@ -1,5 +1,7 @@
 package cos30018.assignment.utils;
 
+import java.io.Serializable;
+
 /**
  * Represents a range of values.
  * 
@@ -8,7 +10,7 @@ package cos30018.assignment.utils;
  * @param <TSelf> The type that is implementing this interface.
  * @param <T> The bounding type.
  */
-public interface Range<TSelf extends Range<TSelf, T>, T extends Comparable<T>> {
+public interface Range<TSelf extends Range<TSelf, T>, T extends Comparable<T>> extends Serializable {
 	/**
 	 * @return The lower bound of this range.
 	 */

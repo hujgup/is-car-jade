@@ -1,5 +1,7 @@
 package cos30018.assignment.utils;
 
+import java.io.Serializable;
+
 /**
  * Represents a bound on a Range.
  * 
@@ -7,7 +9,8 @@ package cos30018.assignment.utils;
  *
  * @param <T> The bounding type.
  */
-public class Bound<T extends Comparable<T>> {
+public class Bound<T extends Comparable<T>> implements Serializable {
+	private static final long serialVersionUID = -6421980391399733512L;
 	private T value;
 	private boolean inclusive;
 	/**

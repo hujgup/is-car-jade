@@ -1,6 +1,7 @@
 package cos30018.assignment.data;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,16 +15,20 @@ import jade.core.AID;
  */
 public class CarID implements Serializable {
 	private static final long serialVersionUID = -2949760205672878537L;
-	/*
 	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.putFields().put("id", id);
-		out.putFields().put("carAgent", carAgent);
-		out.writeFields();
+		out.writeInt(id);
+		out.writeObject(carAgent);
 	}
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		
+		id = in.readInt();
+		carAgent = (AID)in.readObject();
+		if (!ids.containsKey(carAgent)) {
+			ids.put(carAgent, id);
+		}
+		if (!carIds.containsKey(id)) {
+			carIds.put(id, this);
+		}
 	}
-	*/
 	private static HashMap<AID, Integer> ids = new HashMap<>();
 	private static HashMap<Integer, CarID> carIds = new HashMap<>();
 	private int id;

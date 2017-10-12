@@ -1,5 +1,6 @@
 package cos30018.assignment.data;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +14,8 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class Environment {
+public class Environment implements Serializable {
+	private static final long serialVersionUID = 453975851283926647L;
 	private boolean isDummy;
 	private double maxGridLoad;
 	private HashMap<CarID, Car> cars;
