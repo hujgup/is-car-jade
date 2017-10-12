@@ -13,6 +13,7 @@ import cos30018.assignment.utils.Validate;
  * @author Jake
  */
 public class Car implements ImmutableCar {
+	private static final long serialVersionUID = 4503830578099215975L;
 	// IMPORTANT: Every time you add a new constraint field here, remember to:
 	// 1. Add getters and setters to this object.
 	// 2. Add the getter method to the ImmutableCar interface

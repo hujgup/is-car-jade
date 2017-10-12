@@ -1,5 +1,6 @@
 package cos30018.assignment.data;
 
+import java.io.Serializable;
 import java.util.List;
 import cos30018.assignment.utils.LocalTimeRange;
 
@@ -9,7 +10,7 @@ import cos30018.assignment.utils.LocalTimeRange;
  * @author Jake
  *
  */
-public interface ImmutableCar extends Comparable<ImmutableCar> {
+public interface ImmutableCar extends Comparable<ImmutableCar>, Serializable {
 	/**
 	 * @return The IDs of the agents that own this car.
 	 */
