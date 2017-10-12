@@ -25,7 +25,7 @@ public class Car implements ImmutableCar {
 	private double currentCharge;
 	private double chargeCapacity;
 	private double chargePerHour;
-	// TODO: private double chargeDrainRate
+	private double chargeDrainPerHour;
 	private List<LocalTimeRange> unavailableTimes;
 	/**
 	 * Creates a new car.
@@ -34,14 +34,16 @@ public class Car implements ImmutableCar {
 	 * @param currentCharge The initial charge level of this car.
 	 * @param chargeCapacity The maximum amount of charge this car can hold.
 	 * @param chargePerHour The amount of charge this car can gain per hour while charging (controls charge rate).
+	 * @param chargeDrainPerHour The amount of charge this car drains passively per hour (controls how often it needs charging).
 	 * @param unavailableTimes The set of times that this car cannot charge in, e.g. if it is being used to drive to work.
 	 */
-	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, List<LocalTimeRange> unavailableTimes) {
+	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, double chargeDrainPerHour, List<LocalTimeRange> unavailableTimes) {
 		Validate.notNull(owner, "owner");
 		this.owner = owner;
 		setCurrentCharge(currentCharge, "currentCharge");
 		setChargeCapacity(chargeCapacity, "chargeCapacity");
 		setChargePerHour(chargePerHour, "chargePerHour");
+		setChargeDrainPerHour(chargeDrainPerHour, "chargeDrainPerHour");
 		setUnavailableTimes(unavailableTimes, "unavailableTimes");
 	}
 	/**
@@ -51,10 +53,11 @@ public class Car implements ImmutableCar {
 	 * @param currentCharge The initial charge level of this car.
 	 * @param chargeCapacity The maximum amount of charge this car can hold.
 	 * @param chargePerHour The amount of charge this car can gain per hour while charging (controls charge rate).
+	 * @param chargeDrainPerHour The amount of charge this car drains passively per hour (controls how often it needs charging).
 	 * @param unavailableTimes The set of times that this car cannot charge in, e.g. if it is being used to drive to work.
 	 */
-	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, LocalTimeRange... unavailableTimes) {
-		this(owner, currentCharge, chargeCapacity, chargePerHour, Arrays.asList(unavailableTimes));
+	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, double chargeDrainPerHour, LocalTimeRange... unavailableTimes) {
+		this(owner, currentCharge, chargeCapacity, chargePerHour, chargeDrainPerHour, Arrays.asList(unavailableTimes));
 	}
 	private void setCurrentCharge(double value, String argName) {
 		Validate.finite(value, argName);
@@ -71,6 +74,11 @@ public class Car implements ImmutableCar {
 		Validate.finite(value, argName);
 		Validate.positive(value, argName);
 		chargePerHour = value;
+	}
+	private void setChargeDrainPerHour(double value, String argName) {
+		Validate.finite(value, argName);
+		Validate.notNegative(value, argName);
+		chargeDrainPerHour = value;
 	}
 	private void setUnavailableTimes(List<LocalTimeRange> value, String argName) {
 		Validate.notNull(value, argName);
@@ -122,6 +130,18 @@ public class Car implements ImmutableCar {
 		setChargePerHour(value, "value");
 	}
 	@Override
+	public double getChargeDrainPerHour() {
+		return chargeDrainPerHour;
+	}
+	/**
+	 * Sets the charge drain rate of this car.
+	 * 
+	 * @param value The charge drain rate.
+	 */
+	public void setChargeDrainPerHour(double value) {
+		setChargeDrainPerHour(value, "value");
+	}
+	@Override
 	public List<LocalTimeRange> getUnavailableTimes() {
 		return unavailableTimes;
 	}
@@ -141,6 +161,6 @@ public class Car implements ImmutableCar {
 	 * @return This object as an object that can be converted to JSON.
 	 */
 	public JsonData toJson() {
-		return JsonData.createConstraintUpdate(null, currentCharge, chargeCapacity, chargePerHour, unavailableTimes);
+		return JsonData.createConstraintUpdate(null, currentCharge, chargeCapacity, chargePerHour, chargeDrainPerHour, unavailableTimes);
 	}
 }

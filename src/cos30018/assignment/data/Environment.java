@@ -147,7 +147,7 @@ public class Environment {
 	 * @return This object as an object that can be converted to JSON, unioned with withCar.toJson().
 	 */
 	public JsonData toJson(Car withCar) {
-		return JsonData.createConstraintUpdate(maxGridLoad, withCar.getCurrentCharge(), withCar.getChargeCapacity(), withCar.getChargePerHour(), withCar.getUnavailableTimes());
+		return JsonData.createConstraintUpdate(maxGridLoad, withCar.getCurrentCharge(), withCar.getChargeCapacity(), withCar.getChargePerHour(), withCar.getChargeDrainPerHour(), withCar.getUnavailableTimes());
 	}
 	/**
 	 * @param withCar The ID of the car to union with.
@@ -160,6 +160,6 @@ public class Environment {
 	 * @return This object as an object that can be converted to JSON.
 	 */
 	public JsonData toJson() {
-		return JsonData.createConstraintUpdate(maxGridLoad, null, null, null, null);
+		return JsonData.createConstraintUpdate(maxGridLoad, null, null, null, null, null);
 	}
 }

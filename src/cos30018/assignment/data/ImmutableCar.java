@@ -28,6 +28,10 @@ public interface ImmutableCar extends Comparable<ImmutableCar>, Serializable {
 	 */
 	double getChargePerHour();
 	/**
+	 * @return The amount of charge this car passively drains per hour.
+	 */
+	double getChargeDrainPerHour();
+	/**
 	 * @return The times when this car will not be able to be charged (i.e. is in use).
 	 */
 	List<LocalTimeRange> getUnavailableTimes();
