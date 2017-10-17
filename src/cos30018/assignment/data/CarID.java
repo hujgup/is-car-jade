@@ -47,7 +47,11 @@ public class CarID implements Serializable {
 	public static CarID create(AID carAgent) {
 		Validate.notNull(carAgent, "carAgent");
 		Validate.keyNotInMap(carAgent, ids, "carAgent");
-		int id = (int)(Math.random()*20000) + 8080;
+		int id;
+		do {
+			// Random, but no duplicates
+			id = (int)(Math.random()*20000) + 8080;			
+		} while (carIds.containsKey(id));
 		ids.put(carAgent, id);
 		CarID res = new CarID(id, carAgent);
 		carIds.put(id, res);
