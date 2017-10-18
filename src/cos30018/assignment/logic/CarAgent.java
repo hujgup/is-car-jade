@@ -51,7 +51,7 @@ public class CarAgent extends Agent {
 				// setting the protocol and the content of the message to what the the user inputted
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
-				//msg.setContent(input);
+				msg.setContent(input);
 				
 				addBehaviour(new SendingMessage(this, msg, args));
 		

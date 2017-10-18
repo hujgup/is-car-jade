@@ -21,9 +21,9 @@ public class RecievingMessage extends AchieveREResponder {
 			throws NotUnderstoodException, RefuseException {
 		System.out.println("Request Recieved from"+ request.getSender().getName() + " the query is: "+ request.getContent());
 		
-		if(checkAction())
+		if(!(checkTimeTable(request.getContent())))
 		{
-			System.out.println("sending agree");
+			System.out.println("Sending agree");
 			ACLMessage agree = request.createReply();
 			agree.setPerformative(ACLMessage.AGREE);
 			return agree;
@@ -38,7 +38,7 @@ public class RecievingMessage extends AchieveREResponder {
 			ACLMessage response) throws FailureException {
 		
 		
-		if(performAction()) {
+		if(!(checkTimeTable(request.getContent()))) {
 			System.out.println("Action successfully performed, informing initiator");
 			ACLMessage inform = request.createReply();
 			inform.setPerformative(ACLMessage.INFORM);
@@ -52,11 +52,23 @@ public class RecievingMessage extends AchieveREResponder {
 
 	}
 	
-	private boolean checkAction() {
-		return true;
+	private boolean checkTimeTable(String number) {
+		String[] timetable = {"1","2","3"};
+		
+		for (int i= 0; i < timetable.length ; i++)
+		{
+			if(timetable[i].equals(number))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+		
+		
 	}
 	
-	private boolean performAction() {
+	private boolean checkAction() {
 		return true;
 	}
 }
