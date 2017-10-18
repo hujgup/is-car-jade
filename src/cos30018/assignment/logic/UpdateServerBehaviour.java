@@ -89,10 +89,10 @@ req.send("json=" + JSON.stringify({
 							jsonData.updateEnvironment(data, id);
 							// TODO: Always update other agents if maxGridLoad constraint changed (tell them what it changed to)
 							// TODO: Detect if timetable change is required, and do changes, updating or negotiating as needed.
-							responder.respond("Constraints for car " + id.getID() + " updated to:\r\n\r\n" + Provider.OBJ.toJson(data.toJson(id)));
+							responder.respond(Provider.OBJ.toJson(data.toJson(id)));
 						} else {
 							initiateNegotiation();
-							responder.respond("placeholder response");
+							responder.respond("{}");
 						}
 					} catch (Throwable e) {
 						e.printStackTrace();
