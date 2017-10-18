@@ -36,6 +36,7 @@ public class JsonData {
 	private Double currentCharge;
 	private Double chargeCapacity;
 	private Double chargePerHour;
+	private Double chargeDrainPerHour;
 	private List<LocalTimeRangeJson> unavailableTimes;
 	private JsonData() {
 	}
@@ -46,16 +47,18 @@ public class JsonData {
 	 * @param currentCharge The current charge of a car.
 	 * @param chargeCapacity The maximum charge a car can have.
 	 * @param chargePerHour The charge rate of a car.
+	 * @param chargeDrainPerHour The charge drain rate of a car.
 	 * @param unavailableTimes The times a car cannot be charged.
 	 * @return JsonData representing a constraint update.
 	 */
-	public static JsonData createConstraintUpdate(Double maxGridLoad, Double currentCharge, Double chargeCapacity, Double chargePerHour, List<LocalTimeRange> unavailableTimes) {
+	public static JsonData createConstraintUpdate(Double maxGridLoad, Double currentCharge, Double chargeCapacity, Double chargePerHour, Double chargeDrainPerHour, List<LocalTimeRange> unavailableTimes) {
 		JsonData res = new JsonData();
 		res.action = Action.UPDATE_CONSTRAINTS;
 		res.maxGridLoad = maxGridLoad;
 		res.currentCharge = currentCharge;
 		res.chargeCapacity = chargeCapacity;
 		res.chargePerHour = chargePerHour;
+		res.chargeDrainPerHour = chargeDrainPerHour;
 		res.unavailableTimes = unavailableTimes.stream().map(ut -> ut.toJson()).collect(Collectors.toList());
 		return res;
 	}
@@ -94,7 +97,7 @@ public class JsonData {
 	 * @return True if this object represents a constraint update for a car.
 	 */
 	public boolean isCarConstraintUpdate() {
-		return isConstraintUpdate() && (currentCharge != null || chargeCapacity != null || chargePerHour != null || unavailableTimes != null);
+		return isConstraintUpdate() && (currentCharge != null || chargeCapacity != null || chargePerHour != null || chargeDrainPerHour != null || unavailableTimes != null);
 	}
 	/**
 	 * @return True if this object represents a negotiation forcer.
@@ -125,6 +128,12 @@ public class JsonData {
 	 */
 	public Double getChargePerHour() {
 		return chargePerHour;
+	}
+	/**
+	 * @return The chargeDrainPerHour value, or null if it should remain unchanged.
+	 */
+	public Double getChargeDrainPerHour() {
+		return chargeDrainPerHour;
 	}
 	/**
 	 * @return The unavailableTimes value, or null if it should remain unchanged.
@@ -193,8 +202,9 @@ public class JsonData {
 				mustSpecify(currentCharge, "currentCharge", SpecType.NEW_CAR);
 				mustSpecify(chargeCapacity, "chargeCapacity", SpecType.NEW_CAR);
 				mustSpecify(chargePerHour, "chargePerHour", SpecType.NEW_CAR);
+				mustSpecify(chargeDrainPerHour, "chargeDrainPerHour", SpecType.NEW_CAR);
 				mustSpecify(unavailableTimes, "unavailableTimes", SpecType.NEW_CAR);
-			} else if (maxGridLoad == null && currentCharge == null && chargeCapacity == null && chargePerHour == null && unavailableTimes == null) {
+			} else if (maxGridLoad == null && currentCharge == null && chargeCapacity == null && chargePerHour == null && chargeDrainPerHour == null && unavailableTimes == null) {
 				throw new IllegalStateException("At least one constraint update must be specified when \"action\" is " + action + ".");
 			}
 			if (maxGridLoad != null && maxGridLoad <= 0) {
@@ -205,6 +215,8 @@ public class JsonData {
 				throw new IllegalStateException("Key \"chargeCapacity\" cannot be negative.");				
 			} else if (chargePerHour != null && chargePerHour <= 0) {
 				throw new IllegalStateException("Key \"chargePerHour\" must be positive.");
+			} else if (chargeDrainPerHour != null && chargeDrainPerHour < 0) {
+				throw new IllegalStateException("Key \"chargeDrainPerHour\" cannot be negative.");
 			} else if (unavailableTimes != null) {
 				int i = 0;
 				String keyStart;
@@ -226,6 +238,7 @@ public class JsonData {
 			neverSpecify(currentCharge, "currentCharge");
 			neverSpecify(chargeCapacity, "chargeCapacity");
 			neverSpecify(chargePerHour, "chargePerHour");
+			neverSpecify(chargeDrainPerHour, "chargeDrainPerHour");
 			neverSpecify(unavailableTimes, "unavailableTimes");
 		} else {
 			throw new IllegalStateException("Invalid \"action\" value: " + action + ".");
@@ -244,7 +257,7 @@ public class JsonData {
 			}
 			if (isCarConstraintUpdate()) {
 				boolean isNewCar = !data.hasCar(id);
-				Car car = isNewCar ? new Car(id, 0, Double.MIN_VALUE, Double.MIN_VALUE) : data.getCar(id);
+				Car car = isNewCar ? new Car(id, 0, Double.MIN_VALUE, Double.MIN_VALUE, 0) : data.getCar(id);
 				if (isNewCar) {
 					id = car.getOwner();
 					data.addCar(car);

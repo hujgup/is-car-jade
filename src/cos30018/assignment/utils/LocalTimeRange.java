@@ -10,6 +10,10 @@ import cos30018.assignment.ui.json.LocalTimeRangeJson;
  * @author Jake
  */
 public class LocalTimeRange implements Range<LocalTimeRange, LocalTime> {
+	private static final long serialVersionUID = -2818936802648211668L;
+	static {
+		SimpleRange.registerSpecialization(LocalTime.class);
+	}
 	private Bound<LocalTime> low;
 	private Bound<LocalTime> high;
 	private boolean overflowsDay;

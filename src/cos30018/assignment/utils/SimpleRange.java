@@ -1,5 +1,8 @@
 package cos30018.assignment.utils;
 
+import java.time.LocalTime;
+import java.util.LinkedList;
+
 /**
  * Represents a range of values.
  * 
@@ -11,6 +14,8 @@ package cos30018.assignment.utils;
  * @param <T> The bounding type.
  */
 public class SimpleRange<T extends Comparable<T>> implements Range<SimpleRange<T>, T> {
+	private static final long serialVersionUID = 5464801255469085737L;
+	private static LinkedList<Class<?>> specializations = new LinkedList<>();
 	private Bound<T> low;
 	private Bound<T> high;
 	/**
@@ -53,9 +58,22 @@ public class SimpleRange<T extends Comparable<T>> implements Range<SimpleRange<T
 	public SimpleRange(Bound<T> lowerBound, Bound<T> upperBound) {
 		Validate.notNull(lowerBound, "lowerBound");
 		Validate.notNull(upperBound, "upperBound");
+		for (Class<?> type : specializations) {
+			Validate.notClass(lowerBound.getPivot(), LocalTime.class, "<T>");			
+		}
 		Range.notSame(lowerBound, upperBound);
 		low = lowerBound;
 		high = upperBound;
+	}
+	/**
+	 * Registers a range specialization so that users do not create a SimpleRange with that class as the type parameter.
+	 * 
+	 * Call this method from an object's static {} context.
+	 * 
+	 * @param type The type that has a specialized implementation.
+	 */
+	public static void registerSpecialization(Class<?> type) {
+		specializations.add(type);
 	}
 	@Override
 	public Bound<T> getLowerBound() {

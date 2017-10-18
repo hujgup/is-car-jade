@@ -8,7 +8,6 @@ import java.util.Scanner;
 import cos30018.assignment.data.Car;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
-import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPANames;
@@ -21,7 +20,7 @@ public class CarAgent extends Agent {
 	private String input;
 	private Scanner scan;
 	public void setup() {
-		Object[] args = getArguments();
+s		Object[] args = getArguments();
 
 		//System.out.println(car.getChargeCapacity());
 		
@@ -62,7 +61,6 @@ public class CarAgent extends Agent {
 				//msg.setContent(input);
 				
 				addBehaviour(new SendingMessage(this, msg, args));
-		
 		
 		
 		}

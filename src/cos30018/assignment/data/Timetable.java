@@ -15,8 +15,8 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-@SuppressWarnings("serial")
 public class Timetable implements Serializable {
+	private static final long serialVersionUID = 727621017514437558L;
 	/**
 	 * Allows filtering of timetable entries by various constraints.
 	 * 

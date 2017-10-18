@@ -33,6 +33,7 @@ public class Validate {
 	private static final String EXPECT_KEY_IN_MAP = "must be a key in map";
 	private static final String NOT_KEY_IN_MAP = "must not be a key in map";
 	private static final String NOT_CONTAINS_LIST = "must not be in list";
+	private static final String NOT_CLASS = "must not bey of type";
 	private Validate() {
 		// Pure static class
 	}
@@ -539,6 +540,31 @@ public class Validate {
 	public static <T> void listNotContains(T arg, List<? extends T> list, String argName) {
 		if (list.contains(arg)) {
 			throwBinary(arg, list, argName, NOT_CONTAINS_LIST);
+		}
+	}
+	/**
+	 * Makes sure that arg is not of the specified type.
+	 * 
+	 * @param arg The arg to check.
+	 * @param type The type that arg should not be.
+	 * @param argName The name of the arg.
+	 * @param typeName The name of the type.
+	 */
+	public static void notClass(Object arg, Class<?> type, String argName, String typeName) {
+		if (arg.getClass().isAssignableFrom(type)) {
+			throwBinary(arg, type, argName, typeName, NOT_CLASS);
+		}
+	}
+	/**
+	 * Makes sure that arg is not of the specified type.
+	 * 
+	 * @param arg The arg to check.
+	 * @param type The type that arg should not be.
+	 * @param argName The name of the arg.
+	 */
+	public static void notClass(Object arg, Class<?> type, String argName) {
+		if (arg.getClass().isAssignableFrom(type)) {
+			throwBinary(arg, type, argName, NOT_CLASS);
 		}
 	}
 }

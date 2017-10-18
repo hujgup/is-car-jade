@@ -1,5 +1,6 @@
 package cos30018.assignment.data;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,7 +14,8 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class Environment {
+public class Environment implements Serializable {
+	private static final long serialVersionUID = 453975851283926647L;
 	private boolean isDummy;
 	private double maxGridLoad;
 	private HashMap<CarID, Car> cars;
@@ -147,7 +149,7 @@ public class Environment {
 	 * @return This object as an object that can be converted to JSON, unioned with withCar.toJson().
 	 */
 	public JsonData toJson(Car withCar) {
-		return JsonData.createConstraintUpdate(maxGridLoad, withCar.getCurrentCharge(), withCar.getChargeCapacity(), withCar.getChargePerHour(), withCar.getUnavailableTimes());
+		return JsonData.createConstraintUpdate(maxGridLoad, withCar.getCurrentCharge(), withCar.getChargeCapacity(), withCar.getChargePerHour(), withCar.getChargeDrainPerHour(), withCar.getUnavailableTimes());
 	}
 	/**
 	 * @param withCar The ID of the car to union with.
@@ -160,6 +162,6 @@ public class Environment {
 	 * @return This object as an object that can be converted to JSON.
 	 */
 	public JsonData toJson() {
-		return JsonData.createConstraintUpdate(maxGridLoad, null, null, null, null);
+		return JsonData.createConstraintUpdate(maxGridLoad, null, null, null, null, null);
 	}
 }

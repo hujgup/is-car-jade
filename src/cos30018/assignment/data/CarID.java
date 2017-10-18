@@ -1,7 +1,10 @@
 package cos30018.assignment.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedList;
 import cos30018.assignment.utils.Validate;
 import jade.core.AID;
 
@@ -10,36 +13,47 @@ import jade.core.AID;
  * 
  * @author Jake
  */
-public class CarID {
+public class CarID implements Serializable {
+	private static final long serialVersionUID = -2949760205672878537L;
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeInt(id);
+		out.writeObject(carAgent);
+	}
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		id = in.readInt();
+		carAgent = (AID)in.readObject();
+		if (!ids.containsKey(carAgent)) {
+			ids.put(carAgent, id);
+		}
+		if (!carIds.containsKey(id)) {
+			carIds.put(id, this);
+		}
+	}
 	private static HashMap<AID, Integer> ids = new HashMap<>();
-	private static LinkedList<AID> schedulers = new LinkedList<>();
 	private static HashMap<Integer, CarID> carIds = new HashMap<>();
 	private int id;
 	private AID carAgent;
-	private AID schedulerAgent;
-	private CarID(int id, AID carAgent, AID schedulerAgent) {
+	private CarID(int id, AID carAgent) {
 		Validate.notNull(carAgent, "car");
-		Validate.notNull(schedulerAgent, "scheduler");
 		this.id = id;
 		this.carAgent = carAgent;
-		this.schedulerAgent = schedulerAgent;
 	}
 	/**
 	 * Creates a new CarID.
 	 * 
 	 * @param carAgent The agent ID of the car agent.
-	 * @param schedulerAgent The agent ID of the scheduling agent.
 	 * @return
 	 */
-	public static CarID create(AID carAgent, AID schedulerAgent) {
+	public static CarID create(AID carAgent) {
 		Validate.notNull(carAgent, "carAgent");
-		Validate.notNull(schedulerAgent, "schedulerAgent");
 		Validate.keyNotInMap(carAgent, ids, "carAgent");
-		Validate.listNotContains(schedulerAgent, schedulers, "schedulerAgent");
-		int id = (int)(Math.random()*20000) + 8080;
+		int id;
+		do {
+			// Random, but no duplicates
+			id = (int)(Math.random()*20000) + 8080;			
+		} while (carIds.containsKey(id));
 		ids.put(carAgent, id);
-		schedulers.add(schedulerAgent);
-		CarID res = new CarID(id, carAgent, schedulerAgent);
+		CarID res = new CarID(id, carAgent);
 		carIds.put(id, res);
 		return res;
 	}
@@ -64,12 +78,6 @@ public class CarID {
 	public AID getCar() {
 		return carAgent;
 	}
-	/**
-	 * @return The ID of the scheduling agent.
-	 */
-	public AID getScheduler() {
-		return schedulerAgent;
-	}
 	@Override
 	public int hashCode() {
 		// Generated
@@ -77,7 +85,6 @@ public class CarID {
 		int result = 1;
 		result = prime * result + id;
 		result = prime * result + ((carAgent == null) ? 0 : carAgent.hashCode());
-		result = prime * result + ((schedulerAgent == null) ? 0 : schedulerAgent.hashCode());
 		return result;
 	}
 	public boolean equals(CarID other) {
