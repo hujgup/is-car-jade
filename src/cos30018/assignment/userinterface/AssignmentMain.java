@@ -52,12 +52,12 @@ public class AssignmentMain {
 			masterAgent.start();
 			
 			
-//			for (int i = 0; i < 6; i++)
-//			{
-				AgentController carAgent = secondController.createNewAgent("car0",CarAgent.class.getName(), agruments);
+			for (int i = 0; i < 6; i++)
+			{
+				AgentController carAgent = secondController.createNewAgent("car" +i,CarAgent.class.getName(), agruments);
 				carAgent.start();
 				
-//			}
+			}
 			
 			
 			

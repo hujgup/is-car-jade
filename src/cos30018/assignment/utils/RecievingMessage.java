@@ -11,7 +11,8 @@ import jade.proto.AchieveREResponder;
 public class RecievingMessage extends AchieveREResponder {
 	
 	
-	public RecievingMessage(Agent a, MessageTemplate mt) {
+	public RecievingMessage(Agent a, MessageTemplate mt) 
+	{
 		super(a, mt);
 		Agent agent = a;
 		MessageTemplate template = mt;
