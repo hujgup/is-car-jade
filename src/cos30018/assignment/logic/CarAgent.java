@@ -8,6 +8,7 @@ import java.util.Scanner;
 import cos30018.assignment.data.Car;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPANames;
@@ -20,25 +21,16 @@ public class CarAgent extends Agent {
 	private String input;
 	private Scanner scan;
 	public void setup() {
-s		Object[] args = getArguments();
+		Object[] args = getArguments();
 
 		//System.out.println(car.getChargeCapacity());
 		
 		
 		numOfArguments = args.length;
-		
-		addBehaviour(new OneShotBehaviour() {
-			
-			public void action() {
-				System.out.println(getLocalName()+ ": What time would you like?");
-				scan = new Scanner(System.in);
-				input = scan.nextLine();
-				
-			}
-			
-			
-		});
-		
+
+		System.out.println(getLocalName()+ ": What time would you like?");
+		scan = new Scanner(System.in);
+		input = scan.nextLine();
 			if(input != null || input != "")
 			{
 				// Car Object that is intialised at the bottom of this code
@@ -49,6 +41,7 @@ s		Object[] args = getArguments();
 				
 				//Create a Request Message
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+				
 				for(int i=0; i< args.length; i++)
 				{
 					// adding the master as a receiver 
