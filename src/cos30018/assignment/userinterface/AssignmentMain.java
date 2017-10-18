@@ -22,8 +22,8 @@ public class AssignmentMain {
 	 * See initialisation of the method below
 	 */
 	public static void main(String[] args) {
-		
-		createAgents();
+		System.out.println("Hello World");
+		//createAgents();
 	}
 	
 	
