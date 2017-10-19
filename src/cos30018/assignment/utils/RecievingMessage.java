@@ -4,12 +4,12 @@ import jade.core.Agent;
 import jade.domain.FIPAAgentManagement.FailureException;
 import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
+import jade.domain.introspection.AddedBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.AchieveREResponder;
 
 public class RecievingMessage extends AchieveREResponder {
-	
 	
 	public RecievingMessage(Agent a, MessageTemplate mt) 
 	{
@@ -21,17 +21,40 @@ public class RecievingMessage extends AchieveREResponder {
 	protected ACLMessage prepareResponse(ACLMessage request)
 			throws NotUnderstoodException, RefuseException {
 		System.out.println("Request Recieved from"+ request.getSender().getName() + " the query is: "+ request.getContent());
+		if(request.getContent() != null)
+		{
+			System.out.println(request.getContent());
+		}
 		
-		if(!(checkTimeTable(request.getContent())))
+		if(checkAction())
 		{
 			System.out.println("Sending agree");
 			ACLMessage agree = request.createReply();
 			agree.setPerformative(ACLMessage.AGREE);
 			return agree;
-		}else {
+			
+		} else
+		{
 			System.out.println("Refused");
 			throw new RefuseException("failed");
 		}
+		
+		
+//		if(!(checkTimeTable(request.getContent())))
+//		{
+//			System.out.println("Sending agree");
+//			ACLMessage agree = request.createReply();
+//			agree.setPerformative(ACLMessage.AGREE);
+//			return agree;
+//		}else 
+//		{
+//			System.out.println("Refused");
+//			throw new RefuseException("failed");
+//		}
+			
+		
+		
+		
 		
 	}
 	

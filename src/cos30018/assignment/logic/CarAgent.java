@@ -10,9 +10,12 @@ import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.FSMBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import cos30018.assignment.utils.FSMProcessing;
 import cos30018.assignment.utils.SendingMessage;
 
 @SuppressWarnings("serial")
@@ -20,19 +23,19 @@ public class CarAgent extends Agent {
 	private int numOfArguments;
 	private String input;
 	private Scanner scan;
-	public void setup() {
+	
+	 public void setup() {
 		Object[] args = getArguments();
 
 		//System.out.println(car.getChargeCapacity());
-		
+		// testing the FSMProcessing
 		
 		numOfArguments = args.length;
-
 		System.out.println(getLocalName()+ ": What time would you like?");
-		scan = new Scanner(System.in);
-		input = scan.nextLine();
-			if(input != null || input != "")
-			{
+		//scan = new Scanner(System.in);
+		//input = scan.nextLine();
+			//if(input != null || input != "")
+			//{
 				// Car Object that is intialised at the bottom of this code
 				//Car car = createCarObject(50.0,100, 20, LocalTime.parse("10:00"), LocalTime.parse("12:00"));
 				//System.out.println(getLocalName() +": has a charge capacity of "+car.getChargeCapacity());
@@ -51,11 +54,11 @@ public class CarAgent extends Agent {
 				// setting the protocol and the content of the message to what the the user inputted
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
-				msg.setContent(input);
+				msg.setContent("Hello This is a input");
 				
 				addBehaviour(new SendingMessage(this, msg, args));
 		
 		
-		}
+//		}
 	}
 }

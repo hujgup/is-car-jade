@@ -2,6 +2,7 @@ package cos30018.assignment.userinterface;
 
 import cos30018.assignment.logic.CarAgent;
 import cos30018.assignment.logic.SchedulingAgent;
+import cos30018.assignment.utils.FSMProcessing;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
