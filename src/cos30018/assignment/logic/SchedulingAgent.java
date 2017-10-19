@@ -10,6 +10,8 @@ import cos30018.assignment.utils.RecievingMessage;
 
 @SuppressWarnings("serial")
 public class SchedulingAgent extends Agent {
+	
+	// Declaring the states
 	private static String STATE_A= "A";
 	private static String STATE_B= "B";
 	private static String STATE_C= "C";
@@ -36,7 +38,7 @@ public class SchedulingAgent extends Agent {
 		
 		fsm.registerDefaultTransition(STATE_A, STATE_B);
 		fsm.registerDefaultTransition(STATE_B, STATE_C);
-		fsm.registerTransition(STATE_C, STATE_A, 1);
+		fsm.registerTransition(STATE_C, STATE_A, 0);
 		
 		addBehaviour(fsm);
 		

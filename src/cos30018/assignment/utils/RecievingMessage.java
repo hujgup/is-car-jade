@@ -21,11 +21,13 @@ public class RecievingMessage extends AchieveREResponder {
 	protected ACLMessage prepareResponse(ACLMessage request)
 			throws NotUnderstoodException, RefuseException {
 		System.out.println("Request Recieved from"+ request.getSender().getName() + " the query is: "+ request.getContent());
-		if(request.getContent() != null)
-		{
-			System.out.println(request.getContent());
-		}
+//		if(request.getContent() != null)
+//		{
+//			System.out.println(request.getContent());
+//		}
 		
+		// Listen for requests
+		// cyclicBehaviour with a if else block();
 		if(checkAction())
 		{
 			System.out.println("Sending agree");
@@ -75,6 +77,11 @@ public class RecievingMessage extends AchieveREResponder {
 		}
 
 	}
+	
+	// method that gets all the message: use a delayed queue
+	// https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/DelayQueue.html
+	// talk to Jake
+	
 	
 	private boolean checkTimeTable(String number) {
 		String[] timetable = {"1","2","3"};
