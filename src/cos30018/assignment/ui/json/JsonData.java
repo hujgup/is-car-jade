@@ -79,7 +79,7 @@ public class JsonData {
 	 * @return JsonData from the specified JSON string.
 	 */
 	public static JsonData fromJson(String json) {
-		return Provider.OBJ.fromJson(json, JsonData.class);
+		return Json.deserialize(json, JsonData.class);
 	}
 	/*
 	 * @return The action this object represents.

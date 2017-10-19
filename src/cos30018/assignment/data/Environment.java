@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.ui.json.JsonData;
 import cos30018.assignment.utils.Validate;
 
@@ -14,7 +15,7 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class Environment implements Serializable {
+public class Environment implements JsonConvertible<JsonData>, Serializable {
 	private static final long serialVersionUID = 453975851283926647L;
 	private boolean isDummy;
 	private double maxGridLoad;

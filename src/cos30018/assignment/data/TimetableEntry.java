@@ -2,6 +2,9 @@ package cos30018.assignment.data;
 
 import java.io.Serializable;
 import java.time.LocalTime;
+import com.google.gson.annotations.SerializedName;
+import cos30018.assignment.ui.json.JsonConvertible;
+import cos30018.assignment.ui.json.LocalTimeRangeJson;
 import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.Validate;
 
@@ -10,7 +13,17 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class TimetableEntry implements Serializable {
+public class TimetableEntry implements JsonConvertible<TimetableEntry.Json>, Serializable {
+	public class Json {
+		private int id;
+		@SerializedName("range")
+		private LocalTimeRangeJson range2;
+		private Json() {
+			id = car.getOwner().getID();
+			range2 = range.toJson();
+		}
+	}
+	
 	private static final long serialVersionUID = 8041101655729567522L;
 	private Car car;
 	private LocalTimeRange range;
@@ -51,5 +64,8 @@ public class TimetableEntry implements Serializable {
 	 */
 	public LocalTime getEndTime() {
 		return range.getUpperBound().getPivot();
+	}
+	public Json toJson() {
+		return new Json();
 	}
 }

@@ -61,6 +61,18 @@ public class Responder {
 		respond(NanoHTTPD.newFixedLengthResponse(status, mimeType, msg));
 	}
 	/**
+	 * Responds to the wrapped request.
+	 * 
+	 * @param status The HTTP status code to return.
+	 * @param mimeType The MIME type of the response body.
+	 * @param msg The response body.
+	 */
+	public void respond(String mimeType, String msg) {
+		Validate.notNull(mimeType, "mimeType");
+		Validate.notNull(msg, "msg");
+		respond(NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, mimeType, msg));
+	}
+	/**
 	 * Responds to the wrapped request with a status of 200 OK and a MIME type of text/plain.
 	 * 
 	 * @param msg The response body.

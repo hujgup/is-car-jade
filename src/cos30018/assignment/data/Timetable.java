@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.Validate;
 
@@ -15,7 +16,7 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class Timetable implements Serializable {
+public class Timetable implements JsonConvertible<List<TimetableEntry.Json>>, Serializable {
 	private static final long serialVersionUID = 727621017514437558L;
 	/**
 	 * Allows filtering of timetable entries by various constraints.
@@ -159,5 +160,8 @@ public class Timetable implements Serializable {
 	 */
 	public Filterer filter() {
 		return new Filterer();
+	}
+	public List<TimetableEntry.Json> toJson() {
+		return entries.stream().map(x -> x.toJson()).collect(Collectors.toList());
 	}
 }
