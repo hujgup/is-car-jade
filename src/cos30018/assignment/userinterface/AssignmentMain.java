@@ -1,7 +1,10 @@
 package cos30018.assignment.userinterface;
 
+import java.util.Scanner;
+
 import cos30018.assignment.logic.CarAgent;
 import cos30018.assignment.logic.SchedulingAgent;
+import cos30018.assignment.utils.FSMProcessing;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -14,7 +17,6 @@ import jade.wrapper.StaleProxyException;
  * This is the main class to run the program
  */
 public class AssignmentMain {
-	
 	
 	/**
 	 * @param args
@@ -51,13 +53,12 @@ public class AssignmentMain {
 			AgentController masterAgent = mainController.createNewAgent("master", SchedulingAgent.class.getName(), new Object[0]);
 			masterAgent.start();
 			
-			
-//			for (int i = 0; i < 6; i++)
-//			{
-				AgentController carAgent = secondController.createNewAgent("car0",CarAgent.class.getName(), agruments);
+			for (int i = 0; i < 6; i++)
+			{
+				AgentController carAgent = secondController.createNewAgent("car" +i,CarAgent.class.getName(), agruments);
 				carAgent.start();
 				
-//			}
+			}
 			
 			
 			
