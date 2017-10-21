@@ -5,36 +5,41 @@ import java.util.ArrayList;
 import cos30018.assignment.utils.RecievingMessage;
 import cos30018.assignment.utils.SendingMessage;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-public class ListenRequest extends OneShotBehaviour {
+public class ListenRequest extends Behaviour {
 	private Agent agent;
 	private MessageTemplate msgTemp;
+	private int[] requestArray;
+	private Behaviour ListenForRequests;
 	
 	MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST)
 				, MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 	
-	public ListenRequest(Agent a, MessageTemplate mt) {
+	public ListenRequest(Agent a) {
 		agent = a;
-		msgTemp = mt;
+		s
+		requestArray = new int[6];
+		ListenForRequests = new TickerBehaviour(a, 3000) {
+			
+			@Override
+			protected void onTick() {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+			
+			@Override
+			protected void onTick() {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
 	}
-		
-		@Override
-		public void action() {
-			// Add timetable 
-			System.out.println("This is listening to the requests");
-			System.out.println("Adding Requests...");
-			
-			RecievingMessage readingMsg = new RecievingMessage(agent, msgTemp);
-			
-			
-		}
-		
-		public void getTimes()
-		{
-			
-		}
 }

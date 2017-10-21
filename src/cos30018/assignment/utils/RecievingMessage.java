@@ -41,30 +41,13 @@ public class RecievingMessage extends AchieveREResponder {
 			throw new RefuseException("failed");
 		}
 		
-		
-//		if(!(checkTimeTable(request.getContent())))
-//		{
-//			System.out.println("Sending agree");
-//			ACLMessage agree = request.createReply();
-//			agree.setPerformative(ACLMessage.AGREE);
-//			return agree;
-//		}else 
-//		{
-//			System.out.println("Refused");
-//			throw new RefuseException("failed");
-//		}
-			
-		
-		
-		
-		
 	}
 	
 	protected ACLMessage prepareResultNotification(ACLMessage request,
 			ACLMessage response) throws FailureException {
 		
 		
-		if(!(checkTimeTable(request.getContent()))) {
+		if(checkAction()) {
 			System.out.println("Action successfully performed, informing initiator");
 			ACLMessage inform = request.createReply();
 			inform.setPerformative(ACLMessage.INFORM);
@@ -82,22 +65,22 @@ public class RecievingMessage extends AchieveREResponder {
 	// https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/DelayQueue.html
 	// talk to Jake
 	
-	
-	private boolean checkTimeTable(String number) {
-		String[] timetable = {"1","2","3"};
-		
-		for (int i= 0; i < timetable.length ; i++)
-		{
-			if(timetable[i].equals(number))
-			{
-				return true;
-			}
-		}
-		
-		return false;
-		
-		
-	}
+	// check the array for null entries
+//	private boolean checkTimeTable(String number) {
+//		String[] timetable = {"1","2","3"};
+//		
+//		for (int i= 0; i < timetable.length ; i++)
+//		{
+//			if(timetable[i].equals(number))
+//			{
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//		
+//		
+//	}
 	
 	private boolean checkAction() {
 		return true;

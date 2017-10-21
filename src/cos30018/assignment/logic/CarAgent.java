@@ -21,22 +21,19 @@ import cos30018.assignment.utils.SendingMessage;
 @SuppressWarnings("serial")
 public class CarAgent extends Agent {
 	private int numOfArguments;
-	private String input = null;
+	private String input;
 	private Scanner scan;
 	
 	 public void setup() {
 		Object[] args = getArguments();
-
-		//System.out.println(car.getChargeCapacity());
-		// testing the FSMProcessing
 		
 		numOfArguments = args.length;
-//		System.out.println(getLocalName()+ ": What time would you like?");
-//		scan = new Scanner(System.in);
-//		input = scan.nextLine();
+		System.out.println(getLocalName()+ ": What time would you like?");
+		scan = new Scanner(System.in);
+		input = scan.nextLine();
 		
-//		if(input != null || input != "")
-		if(numOfArguments > 0){
+		if(input != null || input != "")
+		{
 				// Car Object that is intialised at the bottom of this code
 				//Car car = createCarObject(50.0,100, 20, LocalTime.parse("10:00"), LocalTime.parse("12:00"));
 				//System.out.println(getLocalName() +": has a charge capacity of "+car.getChargeCapacity());
@@ -56,13 +53,16 @@ public class CarAgent extends Agent {
 				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
 				// set the message content that the car agent will send change to input
-				msg.setContent(args[1].toString());
+				msg.setContent(input);
 				
 				addBehaviour(new SendingMessage(this, msg, args));
 		
-		
-		} else {
-			System.out.println("failed");
+		}// end of if statements
+		else
+		{
+			System.out.println("No input mate, deal with it");
 		}
-	}
-}
+		
+	 } // end of setup 
+	 
+} // end of class
