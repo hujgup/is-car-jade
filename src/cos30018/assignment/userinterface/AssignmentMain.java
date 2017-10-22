@@ -55,6 +55,7 @@ public class AssignmentMain {
 			
 			for (int i = 0; i < 6; i++)
 			{
+				
 				AgentController carAgent = secondController.createNewAgent("car" +i,CarAgent.class.getName(), agruments);
 				carAgent.start();
 				

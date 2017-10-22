@@ -14,18 +14,19 @@ import cos30018.assignment.utils.RecievingMessage;
 public class SchedulingAgent extends Agent {
 	//
 	
-	Behaviour listen;
-	
 	// Declaring the states
 	private static String STATE_A= "A";
 	private static String STATE_B= "B";
 	private static String STATE_C= "C";
+	
+	Behaviour listener;
 	
 	
 	@Override
 	public void setup() {
 		
 		System.out.println("... waiting for request");
+		
 		MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST)
 						, MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 		
@@ -37,15 +38,18 @@ public class SchedulingAgent extends Agent {
 			}
 		};// end of onEnd
 		
-		fsm.registerFirstState(new RecievingMessage(this, template), STATE_A);
-		fsm.registerState(new RecievingMessage(this, template), STATE_B);
-		fsm.registerState(new UpdateRequest(), STATE_C);
+		fsm.registerFirstState(addBehaviour(new ListenRequest(this));, STATE_A);
+		fsm.registerState(new UpdateRequest(), STATE_B);
+		fsm.registerLastState(new NotifyAll(), STATE_C);
 		
+
 		fsm.registerDefaultTransition(STATE_A, STATE_B);
 		fsm.registerDefaultTransition(STATE_B, STATE_C);
 		fsm.registerTransition(STATE_C, STATE_A, 0);
 		
 		addBehaviour(fsm);
+		
+		
 		
 		
 	}
