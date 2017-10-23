@@ -1,5 +1,7 @@
 package cos30018.assignment.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import jade.core.Agent;
@@ -7,7 +9,6 @@ import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 
 public class SendingMessage extends AchieveREInitiator {
-
 	private int numOfArguments;
 	
 	public SendingMessage(Agent a, ACLMessage m, Object[] args) {
@@ -16,6 +17,7 @@ public class SendingMessage extends AchieveREInitiator {
 		ACLMessage msg = m;
 		numOfArguments = args.length;
 	}
+	
 
 
 	protected void handleAgree(ACLMessage agree) {
@@ -53,6 +55,7 @@ public class SendingMessage extends AchieveREInitiator {
 					"Timeout expired: missing " + (numOfArguments - notifications.size()) + " responses");
 		} else {
 			System.out.println("Received notifications about every responder");
+			
 		}
 
 	}

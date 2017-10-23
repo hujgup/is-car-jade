@@ -18,6 +18,10 @@ import jade.wrapper.StaleProxyException;
  */
 public class AssignmentMain {
 	
+	private static Scanner scan = new Scanner(System.in);
+	private static String input;
+	
+	
 	/**
 	 * @param args
 	 * createAgents()- creates the agents for the program
@@ -30,11 +34,12 @@ public class AssignmentMain {
 	
 	
 	private static void createAgents(){
+		
 		// Get an instance of the program at runtime so you can maltipulate 
 		Runtime rt = Runtime.instance();
 		
 		// Arguments holds the name of the master agent name
-		Object[] agruments = new Object[1];
+		Object[] agruments = new Object[3];
 		agruments[0] = "master";
 		
 		// Profile Object is used to make the agent and it's neccessary attributes 
@@ -55,8 +60,20 @@ public class AssignmentMain {
 			
 			for (int i = 0; i < 6; i++)
 			{
-				AgentController carAgent = secondController.createNewAgent("car" +i,CarAgent.class.getName(), agruments);
-				carAgent.start();
+				System.out.println("car" +i + ": What time would you like?");
+				input = scan.nextLine();
+					if(input != null || input != "")
+					{
+						agruments[1] = "car" +i;
+						agruments[2] = input;
+						AgentController carAgent = secondController.createNewAgent("car" +i,CarAgent.class.getName(), agruments);
+						carAgent.start();
+					}
+					
+				if(i == 5)
+				{
+					scan.close();
+				}
 				
 			}
 			
