@@ -17,7 +17,6 @@ import jade.core.behaviours.SequentialBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
-import cos30018.assignment.utils.FSMProcessing;
 import cos30018.assignment.utils.SendingMessage;
 
 @SuppressWarnings("serial")

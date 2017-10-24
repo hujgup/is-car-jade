@@ -14,15 +14,15 @@ import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import cos30018.assignment.utils.FSMProcessing;
 import cos30018.assignment.utils.RecievingMessage;
+import cos30018.assignment.utils.handleCarCharge;
 
 @SuppressWarnings("serial")
 public class SchedulingAgent extends Agent {
 	private static String State_A = "A";
 	private static String State_B = "B";
 	private static String State_C = "C";
-	
+	private handleCarCharge carCharge = new handleCarCharge();
 	private List<String> requests= new ArrayList();
 	private int[] requestTimes;
 	
@@ -45,12 +45,15 @@ public class SchedulingAgent extends Agent {
 		fsm.registerDefaultTransition(State_B, State_C);
 		
 		addBehaviour(fsm);
+		
+		
 	}
 	
 	
 	
 	private class Listen extends TickerBehaviour
 	{
+		
 		
 		public Listen(Agent a, long period) {
 			super(a, period);
@@ -61,13 +64,20 @@ public class SchedulingAgent extends Agent {
 		protected void onTick() {
 			// TODO Auto-generated method stub
 		ACLMessage msg = receive();
+	
 		try{
-		requests.add(msg.getContent());
+			//handleCarCharge charge = new handleCarCharge(msg.getContent());
+			requests.add(msg.getContent());
+			handleCarCharge carCharge = new handleCarCharge(msg.getContent());
 		
 		} catch (NullPointerException e)
 		{
 			System.out.println("Stopping...");
 			
+//			for(int i = 0; i < carCharge.getHoursInDaySize(); i++)
+//			{
+//				System.out.println("The HourInDay has value: " + carCharge.getHoursInDay(i));
+//			}
 			requestTimes = new int[requests.size()];
 			
 			for(int i = 0; i < requests.size(); i++)
@@ -84,40 +94,9 @@ public class SchedulingAgent extends Agent {
 			
 			stop();
 		}
-//		if(msg != null)
-//		{
-//			requests.add(msg.getContent());
-//			if(requests.size() == 6)
-//			{
-//				for (int i =0; i < 6; i++)
-//				{
-//					System.out.println(requests.get(i));
-//				}
-//			}
-//		}else block();
+
 	}// end of onTick
 } // end of Listen Class
-		
-		
-		
-//		@Override
-//		public void onT() {
-//			
-//			
-//			
-////			ACLMessage msg = receive();
-////			if(msg != null)
-////			{
-////				requests.add(msg.getContent());
-////				if(requests.size() == 6)
-////				{
-////					for (int i =0; i < 6; i++)
-////					{
-////						System.out.println(requests.get(i));
-////					}
-////				}
-////			}else block();
-		// }
 	
 	private class Update extends OneShotBehaviour
 	{
@@ -139,45 +118,5 @@ public class SchedulingAgent extends Agent {
 		}
 	}// end of Notify Class
 	
-} // end of class
-	
-////	// Declaring the states
-////	private static String STATE_A= "A";
-////	private static String STATE_B= "B";
-////	private static String STATE_C= "C";
-////	
-////	Behaviour listener;
-////	
-////	
-////	@Override
-////	public void setup() {
-////		
-////		System.out.println("... waiting for request");
-////		
-////		MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST)
-////						, MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
-////		
-////		FSMBehaviour fsm = new FSMBehaviour(this){
-////			@Override
-////			public int onEnd() {
-////				// TODO Auto-generated method stub
-////				return super.onEnd();
-////			}
-////		};// end of onEnd
-////		
-////		fsm.registerFirstState(addBehaviour(new ListenRequest(this));, STATE_A);
-////		fsm.registerState(new UpdateRequest(), STATE_B);
-////		fsm.registerLastState(new NotifyAll(), STATE_C);
-////		
-////
-////		fsm.registerDefaultTransition(STATE_A, STATE_B);
-////		fsm.registerDefaultTransition(STATE_B, STATE_C);
-////		fsm.registerTransition(STATE_C, STATE_A, 0);
-////		
-////		addBehaviour(fsm);
-////		
-//		
-//		
-//		
-//	}
-//}
+} // end of Scheduling class
+

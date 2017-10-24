@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import cos30018.assignment.logic.CarAgent;
 import cos30018.assignment.logic.SchedulingAgent;
-import cos30018.assignment.utils.FSMProcessing;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -60,7 +59,7 @@ public class AssignmentMain {
 			
 			for (int i = 0; i < 6; i++)
 			{
-				System.out.println("car" +i + ": What time would you like?");
+				System.out.println("car" +i + ": What is your current charge level?");
 				input = scan.nextLine();
 					if(input != null || input != "")
 					{
