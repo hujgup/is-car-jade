@@ -15,17 +15,18 @@ import cos30018.assignment.utils.Validate;
  */
 public class TimetableEntry implements JsonConvertible<TimetableEntry.Json>, Serializable {
 	public class Json {
-		private int id;
+		@SerializedName("id")
+		private int id2;
 		@SerializedName("range")
 		private LocalTimeRangeJson range2;
 		private Json() {
-			id = car.getOwner().getID();
+			id2 = id.getID();
 			range2 = range.toJson();
 		}
 	}
 	
 	private static final long serialVersionUID = 8041101655729567522L;
-	private Car car;
+	private CarID id;
 	private LocalTimeRange range;
 	/**
 	 * Creates a new TimetableEntry.
@@ -34,18 +35,18 @@ public class TimetableEntry implements JsonConvertible<TimetableEntry.Json>, Ser
 	 * @param startTime The time that charging will begin.
 	 * @param endTime The time that charging will end.
 	 */
-	public TimetableEntry(Car car, LocalTime startTime, LocalTime endTime) {
-		Validate.notNull(car, "car");
+	public TimetableEntry(CarID id, LocalTime startTime, LocalTime endTime) {
+		Validate.notNull(id, "id");
 		Validate.notNull(startTime, "startTime");
 		Validate.notNull(endTime, "endTime");
-		this.car = car;
+		this.id = id;
 		this.range = new LocalTimeRange(startTime, true, endTime, false);
 	}
 	/**
 	 * @return The car this entry pertains to.
 	 */
-	public Car getCar() {
-		return car;
+	public CarID getId() {
+		return id;
 	}
 	/**
 	 * @return The temporal range this entry spans.
