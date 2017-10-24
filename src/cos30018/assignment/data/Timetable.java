@@ -35,7 +35,7 @@ public class Timetable implements JsonConvertible<List<TimetableEntry.Json>>, Se
 		 * @return This object, for chaining.
 		 */
 		public Filterer byOwner(CarID owner) {
-			stream = stream.filter(entry -> entry.getCar().getOwner().equals(owner));
+			stream = stream.filter(entry -> entry.getId().equals(owner));
 			return this;
 		}
 		/**
@@ -135,7 +135,7 @@ public class Timetable implements JsonConvertible<List<TimetableEntry.Json>>, Se
 	public AddResult addEntry(TimetableEntry entry) {
 		Validate.notNull(entry, "entry");
 		AddResult res;
-		if (entries.isEmpty() || filter().byOwner(entry.getCar().getOwner()).overlapsTimeRange(entry.getTimeRange()).isEmpty()) {
+		if (entries.isEmpty() || filter().byOwner(entry.getId()).overlapsTimeRange(entry.getTimeRange()).isEmpty()) {
 			// Filter is checking if there's another entry for the arg entry's car whose slot overlaps the arg entry's slot
 			// (i.e. Any one car cannot be scheduled for charging more than once at any one time)
 			entries.add(entry);
