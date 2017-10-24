@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.Validate;
 
@@ -15,7 +16,7 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class Timetable implements Serializable {
+public class Timetable implements JsonConvertible<List<TimetableEntry.Json>>, Serializable {
 	private static final long serialVersionUID = 727621017514437558L;
 	/**
 	 * Allows filtering of timetable entries by various constraints.
@@ -34,7 +35,7 @@ public class Timetable implements Serializable {
 		 * @return This object, for chaining.
 		 */
 		public Filterer byOwner(CarID owner) {
-			stream = stream.filter(entry -> entry.getCar().getOwner().equals(owner));
+			stream = stream.filter(entry -> entry.getId().equals(owner));
 			return this;
 		}
 		/**
@@ -134,7 +135,7 @@ public class Timetable implements Serializable {
 	public AddResult addEntry(TimetableEntry entry) {
 		Validate.notNull(entry, "entry");
 		AddResult res;
-		if (entries.isEmpty() || filter().byOwner(entry.getCar().getOwner()).overlapsTimeRange(entry.getTimeRange()).isEmpty()) {
+		if (entries.isEmpty() || filter().byOwner(entry.getId()).overlapsTimeRange(entry.getTimeRange()).isEmpty()) {
 			// Filter is checking if there's another entry for the arg entry's car whose slot overlaps the arg entry's slot
 			// (i.e. Any one car cannot be scheduled for charging more than once at any one time)
 			entries.add(entry);
@@ -159,5 +160,8 @@ public class Timetable implements Serializable {
 	 */
 	public Filterer filter() {
 		return new Filterer();
+	}
+	public List<TimetableEntry.Json> toJson() {
+		return entries.stream().map(x -> x.toJson()).collect(Collectors.toList());
 	}
 }

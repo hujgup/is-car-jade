@@ -37,6 +37,12 @@ public class Validate {
 	private Validate() {
 		// Pure static class
 	}
+	private static String strVal(String str) {
+		return str != null ? str : "null";
+	}
+	private static String strVal(Object obj) {
+		return obj != null ? obj.toString() : "null";
+	}
 	/**
 	 * Throws a validation error derived from one value.
 	 * 
@@ -45,7 +51,7 @@ public class Validate {
 	 * @param details The details of the error.
 	 */
 	public static void throwUnary(String argVal, String argName, String details) {
-		throw new IllegalArgumentException(argName + " " + details + " (was " + argVal + ").");
+		throw new IllegalArgumentException(strVal(argName) + " " + details + " (was " + argVal + ").");
 	}
 	/**
 	 * Throws a validation error derived from one value.
@@ -55,7 +61,7 @@ public class Validate {
 	 * @param details The details of the error.
 	 */
 	public static void throwUnary(Object argVal, String argName, String details) {
-		throwUnary(argVal.toString(), argName, details);
+		throwUnary(strVal(argVal), argName, details);
 	}
 	/**
 	 * Throws a validation error derived from one value.
@@ -77,7 +83,7 @@ public class Validate {
 	 * @param details The details of the error.
 	 */
 	public static void throwBinary(String aVal, String bVal, String aName, String bName, String details) {
-		throw new IllegalArgumentException(aName + " " + details + " " + bName + " (were " + aVal + " and " + bVal + " respectively).");
+		throw new IllegalArgumentException(aName + " " + details + " " + bName + " (were " + strVal(aVal) + " and " + strVal(bVal) + " respectively).");
 	}
 	/**
 	 * Throws a validation error derived from how two values are related.
@@ -89,7 +95,7 @@ public class Validate {
 	 * @param details The details of the error.
 	 */
 	public static void throwBinary(Object aVal, Object bVal, String aName, String bName, String details) {
-		throwBinary(aVal.toString(), bVal.toString(), aName, bName, details);
+		throwBinary(strVal(aVal), strVal(bVal), aName, bName, details);
 	}
 	/**
 	 * Throws a validation error derived from how two values are related, where one value is a constant.
@@ -100,7 +106,7 @@ public class Validate {
 	 * @param details The details of the error.
 	 */
 	public static void throwBinary(String aVal, String bVal, String aName, String details) {
-		throw new IllegalArgumentException(aName + " " + details + " " + bVal + " (was " + aVal + ").");
+		throw new IllegalArgumentException(aName + " " + details + " " + strVal(bVal) + " (was " + strVal(aVal) + ").");
 	}
 	/**
 	 * Throws a validation error derived from how two values are related, where one value is a constant.
@@ -111,7 +117,7 @@ public class Validate {
 	 * @param details The details of the error.
 	 */
 	public static void throwBinary(Object aVal, Object bVal, String aName, String details) {
-		throwBinary(aVal.toString(), bVal.toString(), aName, details);
+		throwBinary(strVal(aVal), strVal(bVal), aName, details);
 	}
 	/**
 	 * Makes sure arg is a number.

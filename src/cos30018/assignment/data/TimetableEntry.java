@@ -2,6 +2,9 @@ package cos30018.assignment.data;
 
 import java.io.Serializable;
 import java.time.LocalTime;
+import com.google.gson.annotations.SerializedName;
+import cos30018.assignment.ui.json.JsonConvertible;
+import cos30018.assignment.ui.json.LocalTimeRangeJson;
 import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.Validate;
 
@@ -10,9 +13,20 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class TimetableEntry implements Serializable {
+public class TimetableEntry implements JsonConvertible<TimetableEntry.Json>, Serializable {
+	public class Json {
+		@SerializedName("id")
+		private int id2;
+		@SerializedName("range")
+		private LocalTimeRangeJson range2;
+		private Json() {
+			id2 = id.getID();
+			range2 = range.toJson();
+		}
+	}
+	
 	private static final long serialVersionUID = 8041101655729567522L;
-	private Car car;
+	private CarID id;
 	private LocalTimeRange range;
 	/**
 	 * Creates a new TimetableEntry.
@@ -21,18 +35,18 @@ public class TimetableEntry implements Serializable {
 	 * @param startTime The time that charging will begin.
 	 * @param endTime The time that charging will end.
 	 */
-	public TimetableEntry(Car car, LocalTime startTime, LocalTime endTime) {
-		Validate.notNull(car, "car");
+	public TimetableEntry(CarID id, LocalTime startTime, LocalTime endTime) {
+		Validate.notNull(id, "id");
 		Validate.notNull(startTime, "startTime");
 		Validate.notNull(endTime, "endTime");
-		this.car = car;
+		this.id = id;
 		this.range = new LocalTimeRange(startTime, true, endTime, false);
 	}
 	/**
 	 * @return The car this entry pertains to.
 	 */
-	public Car getCar() {
-		return car;
+	public CarID getId() {
+		return id;
 	}
 	/**
 	 * @return The temporal range this entry spans.
@@ -51,5 +65,8 @@ public class TimetableEntry implements Serializable {
 	 */
 	public LocalTime getEndTime() {
 		return range.getUpperBound().getPivot();
+	}
+	public Json toJson() {
+		return new Json();
 	}
 }

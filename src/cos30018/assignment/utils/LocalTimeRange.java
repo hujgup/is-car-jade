@@ -1,6 +1,7 @@
 package cos30018.assignment.utils;
 
 import java.time.LocalTime;
+import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.ui.json.LocalTimeBoundJson;
 import cos30018.assignment.ui.json.LocalTimeRangeJson;
 
@@ -9,7 +10,7 @@ import cos30018.assignment.ui.json.LocalTimeRangeJson;
  * 
  * @author Jake
  */
-public class LocalTimeRange implements Range<LocalTimeRange, LocalTime> {
+public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Range<LocalTimeRange, LocalTime> {
 	private static final long serialVersionUID = -2818936802648211668L;
 	static {
 		SimpleRange.registerSpecialization(LocalTime.class);
@@ -57,7 +58,6 @@ public class LocalTimeRange implements Range<LocalTimeRange, LocalTime> {
 	public LocalTimeRange(Bound<LocalTime> lowerBound, Bound<LocalTime> upperBound) {
 		Validate.notNull(lowerBound, "lowerBound");
 		Validate.notNull(upperBound, "upperBound");
-		Range.notSame(lowerBound, upperBound);
 		low = lowerBound;
 		high = upperBound;
 		overflowsDay = low.getPivot().compareTo(high.getPivot()) > 0;
@@ -127,6 +127,20 @@ public class LocalTimeRange implements Range<LocalTimeRange, LocalTime> {
 	@Override
 	public String toString() {
 		return Range.toString(this);
+	}
+	/**
+	 * @return This object, but treated as a discreet range.
+	 */
+	public SimpleRange<Integer> toHourRange() {
+		int lowPivot = low.getPivot().getHour();
+		int highPivot = high.getPivot().getHour();
+		if (!low.isInclusive()) {
+			lowPivot++;
+		}
+		if (!high.isInclusive()) {
+			highPivot--;
+		}
+		return new SimpleRange<>(lowPivot, true, highPivot, true);
 	}
 	/**
 	 * @return This object as an object that can be converted to JSON.

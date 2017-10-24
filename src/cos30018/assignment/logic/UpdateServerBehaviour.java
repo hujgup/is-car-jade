@@ -1,20 +1,13 @@
 package cos30018.assignment.logic;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import cos30018.assignment.data.Car;
+import com.google.gson.annotations.SerializedName;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
+import cos30018.assignment.data.Timetable;
 import cos30018.assignment.ui.http.Responder;
+import cos30018.assignment.ui.json.Json;
 import cos30018.assignment.ui.json.JsonData;
-import cos30018.assignment.ui.json.LocalTimeRangeJson;
-import cos30018.assignment.ui.json.Provider;
-import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.Validate;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -26,6 +19,14 @@ import fi.iki.elonen.NanoHTTPD.Response;
  */
 @SuppressWarnings("serial")
 public class UpdateServerBehaviour extends ServerBehaviour {
+	private static class JsonError {
+		private String error;
+		public JsonError(String err) {
+			error = err;
+		}
+	}
+	
+	private static final String MIME_TYPE = "application/json";
 	private Environment data;
 	private CarID id;
 	/**
@@ -43,40 +44,16 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 		this.data = data;
 		this.id = id;
 	}
-	private void initiateNegotiation() {
-		// TODO: Initiate negotiation process
+	private void generateError(Responder responder, String err) {
+		responder.respond(Response.Status.BAD_REQUEST, MIME_TYPE, generateError(err));
 	}
-	/*
-JS test code:
-
-var req = new XMLHttpRequest();
-req.open("POST", "http://localhost:[PORT NUMBER]/", true);
-req.onreadystatechange = function() {
-	if (req.readyState === 4) {
-		console.log(req.responseText);
+	private String generateError(String err) {
+		return Json.serialize(new JsonError(err));
 	}
-};
-req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-req.send("json=" + JSON.stringify({
-	"action": "constraints",
-	"maxGridLoad": 80.32,
-	"currentCharge": 0,
-	"chargeCapacity": 100,
-	"chargePerHour": 34,
-	"unavailableTimes": [
-		{
-			"lowerBound": {
-				"pivot": "12:34:56",
-				"inclusive": false
-			},
-			"upperBound": {
-				"pivot": "17:12",
-				"inclusive": true
-			}
-		}
-	]
-}));
-	*/
+	public ActionResult<Timetable> negotiateTimetable(boolean constraintsWereUpdated) {
+		// TODO for James: Agent comms (along w/ environment data if arg is true), block until something gets returned
+		return null;
+	}
 	@Override
 	protected void handle(IHTTPSession session, Responder responder) {
 		switch (session.getMethod()) {
@@ -85,25 +62,42 @@ req.send("json=" + JSON.stringify({
 					try {
 						JsonData jsonData = JsonData.fromJson(session.getParms().get("json"));
 						jsonData.validate(data, id);
-						if (jsonData.isConstraintUpdate()) {
-							jsonData.updateEnvironment(data, id);
-							// TODO: Always update other agents if maxGridLoad constraint changed (tell them what it changed to)
-							// TODO: Detect if timetable change is required, and do changes, updating or negotiating as needed.
-							responder.respond("Constraints for car " + id.getID() + " updated to:\r\n\r\n" + Provider.OBJ.toJson(data.toJson(id)));
-						} else {
-							initiateNegotiation();
-							responder.respond("placeholder response");
+						try {
+							if (jsonData.isConstraintUpdate()) {
+								jsonData.updateEnvironment(data, id);
+							}
+							ActionResult<Timetable> res = negotiateTimetable(jsonData.isConstraintUpdate());
+							Validate.notNull(res, "res");
+							String resJson = Json.serialize(res);
+							if (res.hasResult()) {
+								System.out.println("Success.");
+								responder.respond(MIME_TYPE, resJson);
+							} else {
+								System.out.println("ERR: Error from negotiation.");
+								responder.respond(Response.Status.INTERNAL_ERROR, MIME_TYPE, resJson);
+							}
+						} catch (IllegalArgumentException e) {
+							System.out.println("ERR: Validation failed.");
+							e.printStackTrace();
+							responder.respond(Response.Status.INTERNAL_ERROR, MIME_TYPE, generateError("Validation failed: " + e.getMessage()));														
+						} catch (Throwable e) {
+							System.out.println("ERR: Exception.");
+							e.printStackTrace();
+							responder.respond(Response.Status.INTERNAL_ERROR, MIME_TYPE, generateError("Unhandled exception: " + e.getMessage()));							
 						}
 					} catch (Throwable e) {
+						System.out.println("ERR: Data was not JSON.");
 						e.printStackTrace();
-						responder.respond(Response.Status.BAD_REQUEST, "text/plain", "ERR: Key \"json\" contained malformed JSON.\r\n" + e.getMessage());
+						generateError(responder, "Key \"json\" contained malformed JSON: " + e.getMessage());
 					}
 				} else {
-					responder.respond(Response.Status.BAD_REQUEST, "text/plain", "ERR: Key \"json\" was not present.");
+					System.out.println("ERR: No JSON key.");
+					generateError(responder, "Key \"json\" was not present.");
 				}
 				break;
 			default:
-				responder.respond(Response.Status.BAD_REQUEST, "text/plain", "ERR: Not a POST request.");
+				System.out.println("ERR: Wrong method.");
+				generateError(responder, "Not a POST request.");
 				break;
 		}
 		
