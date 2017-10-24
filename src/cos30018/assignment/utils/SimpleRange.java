@@ -61,7 +61,6 @@ public class SimpleRange<T extends Comparable<T>> implements Range<SimpleRange<T
 		for (Class<?> type : specializations) {
 			Validate.notClass(lowerBound.getPivot(), LocalTime.class, "<T>");			
 		}
-		Range.notSame(lowerBound, upperBound);
 		low = lowerBound;
 		high = upperBound;
 	}

@@ -67,17 +67,4 @@ public interface Range<TSelf extends Range<TSelf, T>, T extends Comparable<T>> e
 		res += range.getUpperBound().isInclusive() ? "]" : ")";
 		return res;
 	}
-	/**
-	 * Validates that two bounds are not the same.
-	 * 
-	 * @param lowerBound The lower bound.
-	 * @param upperBound The upper bound.
-	 */
-	static <T2 extends Comparable<T2>> void notSame(Bound<T2> lowerBound, Bound<T2> upperBound) {
-		if (lowerBound.isInclusive() ^ upperBound.isInclusive()) {
-			Validate.lessThan(lowerBound.getPivot(), upperBound.getPivot(), "lowerBound pivot", "upperBound pivot");
-		} else {			
-			Validate.lessThanOrEqualTo(lowerBound.getPivot(), upperBound.getPivot(), "lowerBound pivot", "upperBound pivot");
-		}
-	}
 }

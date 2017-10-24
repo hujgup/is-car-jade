@@ -58,7 +58,6 @@ public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Rang
 	public LocalTimeRange(Bound<LocalTime> lowerBound, Bound<LocalTime> upperBound) {
 		Validate.notNull(lowerBound, "lowerBound");
 		Validate.notNull(upperBound, "upperBound");
-		Range.notSame(lowerBound, upperBound);
 		low = lowerBound;
 		high = upperBound;
 		overflowsDay = low.getPivot().compareTo(high.getPivot()) > 0;
@@ -128,6 +127,20 @@ public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Rang
 	@Override
 	public String toString() {
 		return Range.toString(this);
+	}
+	/**
+	 * @return This object, but treated as a discreet range.
+	 */
+	public SimpleRange<Integer> toHourRange() {
+		int lowPivot = low.getPivot().getHour();
+		int highPivot = high.getPivot().getHour();
+		if (!low.isInclusive()) {
+			lowPivot++;
+		}
+		if (!high.isInclusive()) {
+			highPivot--;
+		}
+		return new SimpleRange<>(lowPivot, true, highPivot, true);
 	}
 	/**
 	 * @return This object as an object that can be converted to JSON.
