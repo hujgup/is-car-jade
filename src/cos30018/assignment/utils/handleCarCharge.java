@@ -2,7 +2,10 @@ package cos30018.assignment.utils;
 
 import jade.util.leap.Iterator;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,11 +34,7 @@ public class handleCarCharge {
 		{
 			for(Integer i = 1; i < 25; i++)
 			{
-				System.out.println("Adding the days...");
 				hoursInDay.add(i);
-				
-				System.out.println(hoursInDay.size());
-				
 			}
 		} else
 		{
@@ -60,7 +59,7 @@ public class handleCarCharge {
 		
 		setHours(currentCharge);
 		
-		System.out.println("The hours is: " + getHours());
+		populateUnavaliableTimes();
 	}
 	
 	
@@ -97,33 +96,18 @@ public class handleCarCharge {
 		// make a new instance of the static array
 		unavaliableTimes = new ArrayList<Integer>();
 		
+		//LocalTimeRange time = new LocalTimeRange(LocalTime.NOON, false, LocalTime.MIDNIGHT, false);
+		
+		// print out the range
+		System.out.println("Noon: "+ LocalTime.NOON);
+		System.out.println("Now: "+ LocalTime.now());
+		System.out.println("Midnight: "+ LocalTime.MIDNIGHT);
+		System.out.println("Parse value: "+ LocalTime.of(8,00));
+		
+		//System.out.println(time.toHourRange());
+		
 		
 		
 	}
 	
-	
-	public void checkTimes(){
-		if(!(carTimes.isEmpty())){
-			// Iterator through the HashMap
-			Iterator it = (Iterator) carTimes.entrySet().iterator();
-			while(it.hasNext())
-			{
-				// get the  the 
-				Map.Entry temp= (Map.Entry)it.next();
-				
-				int[] tempArray = (int[])temp.getValue();
-			}
-			
-			
-			
-		} else {
-			System.out.println("There is no times to check");
-		}
-	}
-	
-	
-	
-	
-	
-
 }
