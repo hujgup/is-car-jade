@@ -33,7 +33,7 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 	private static HashMap<AID, Integer> ids = new HashMap<>();
 	private static HashMap<Integer, CarID> carIds = new HashMap<>();
 	private int id;
-	private AID carAgent;
+	private transient AID carAgent;
 	private CarID(int id, AID carAgent) {
 		Validate.notNull(carAgent, "car");
 		this.id = id;

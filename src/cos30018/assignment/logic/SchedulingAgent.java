@@ -997,6 +997,20 @@ public class SchedulingAgent extends Agent {
 			i++;
 		}
 	}
+	private void resolveRange(int low, int high, Integer[] times, ArrayList<LocalTimeRange> ranges) {
+		if (low == 0) {
+			// Check for wrap around midnight
+			int i = times.length - 1;
+			int expected = 24;
+			while (i > 0 && times[i] == expected) {
+				low = expected - 1;
+				expected--;
+				i--;
+			}
+		}
+		System.out.println("[" + low + ", " + high + "]");
+		ranges.add(new LocalTimeRange(LocalTime.of(low, 0), true, LocalTime.of(high, 0), true));
+	}
 	private Timetable createTimetable() throws IllegalAccessException {
 		Timetable res = new Timetable();
 		int i = 0;
@@ -1014,30 +1028,24 @@ public class SchedulingAgent extends Agent {
 		int low = -1;
 		int high = -1;
 		int last = -1;
-		int expected;
-		int j;
 		for (ImmutableCar car : env.getAllCars().values()) {
 			times = (Integer[])fChargeTimes.get(i).get(this);
+			System.out.println(times.length);
 			for (int time : times) {
+				high = -1;
 				time--; // 1-indexed back to 0-indexed
 				if (low == -1) {
 					low = time;
 				} else if (last != time - 1) {
 					high = time - 1;
-					if (low == 0) {
-						// Check for wrap around midnight
-						j = times.length - 1;
-						expected = 24;
-						while (j > 0 && times[i] == expected) {
-							low = expected - 1;
-							expected--;
-							j--;
-						}
-					}
-					ranges.add(new LocalTimeRange(LocalTime.of(low, 0), true, LocalTime.of(high, 0), true));
+					resolveRange(low, high, times, ranges);
 					low = time;
 				}
 				last = time;
+			}
+			if (high == -1) {
+				high = times[times.length - 1];
+				resolveRange(low, high, times, ranges);
 			}
 			for (LocalTimeRange range : ranges) {
 				res.addEntry(new TimetableEntry(car.getOwner(), range));

@@ -2,6 +2,7 @@ package cos30018.assignment.ui.json;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import com.google.gson.annotations.SerializedName;
 import cos30018.assignment.utils.Bound;
 import cos30018.assignment.utils.Validate;
 
@@ -11,6 +12,7 @@ import cos30018.assignment.utils.Validate;
  * @author Jake
  */
 public class LocalTimeBoundJson {
+	@SerializedName("value")
 	private String pivot;
 	private boolean inclusive;
 	/**
