@@ -947,7 +947,7 @@ public class SchedulingAgent extends Agent {
 			int runTime = 0;
 			@Override
 			public void action() {
-				ACLMessage msg=receive();
+				ACLMessage msg = blockingReceive();
 				if(msg!=null) {
 					if(C1AID != null) {
 						if(C2AID != null) {
@@ -1005,7 +1005,7 @@ public class SchedulingAgent extends Agent {
 						msg1.addReceiver(C1AID);
 						send(msg1);
 					}
-				}else block();	
+				}	
 			}
 		});	
 	}
