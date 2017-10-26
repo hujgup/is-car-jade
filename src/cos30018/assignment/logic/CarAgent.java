@@ -1,105 +1,121 @@
 package cos30018.assignment.logic;
 
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.behaviours.ReceiverBehaviour;
+import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.WakerBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+
 import java.io.IOException;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
 import cos30018.assignment.data.Car;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.FSMBehaviour;
-import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.SequentialBehaviour;
-import jade.core.behaviours.TickerBehaviour;
-import jade.domain.FIPANames;
-import jade.lang.acl.ACLMessage;
-import cos30018.assignment.utils.SendingMessage;
+import cos30018.assignment.data.Timetable;
+import cos30018.assignment.utils.LocalTimeRange;
+import cos30018.assignment.utils.handleCarCharge;
 
 @SuppressWarnings("serial")
 public class CarAgent extends Agent {
 	//private int numOfArguments;
 	//private SequentialBehaviour listener;
+	private List<Integer> unavailableTimes;
+	private List<Integer> finalTimes;
+	private handleCarCharge carCharge;
+	private List<Integer> chargeTimes = new ArrayList<>();
+	
+	public void toList(String s, List<Integer> l) {
+		String replace = s.replace("[","");
+		String replace1 = replace.replace("]","");
+		String replace2 = replace1.replace(" ","");
+		List<String> arrayList = new ArrayList<String>    (Arrays.asList(replace2.split(",")));
+		for(String fav:arrayList){
+		    l.add(Integer.parseInt(fav.trim()));
+		}
+	}
 	
 	 public void setup() {
 		Object[] args = getArguments();
-		String masterAID = (String) args[0];
-		String carAID = (String) args[1];
-		String inputValue = (String) args[2];
 		
-		//numOfArguments = args.length;
+		// Test Time Table
+		Timetable testTimetable = new Timetable();
+		AID carAID = getAID();
+		//String masterAID = "master";
+		String masterAID = args[0].toString();
+//		String carAID = (String) args[1];
+//		String inputValue = (String) args[2];
+		CarID carID = CarID.create(getAID());
 		
-		if(inputValue != null || inputValue != "")
-		{
-			AID dest = new AID(masterAID,AID.ISLOCALNAME);
-			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			msg.setContent(inputValue);
-			msg.addReceiver(dest);
-			send(msg);
+		
+		
+		// testing 
+		Environment env = Environment.createDummyData();
+		
+		
+//		List<LocalTimeRange> timeList = new ArrayList<>();
+//		LocalTimeRange time = new LocalTimeRange(LocalTime.of(8, 00), false, LocalTime.of(12, 30), false);
+//		timeList.add(time);
+//		Car testCar = new Car(CarID.create(getAID()), 500, 1000, 100, 50, timeList);
+//		Environment env2 = new Environment(100.00, testCar);
+//		
+		
+		
+		// env, carid, callback
+		
+		// Environment data, CarID id, Function<Boolean, ActionResult<Timetable>> messageSender
+		CarAgent t = this;
+		Function<Boolean, ActionResult<Timetable>> callback = new Function<Boolean, ActionResult<Timetable>>() {
+			@Override
+			public ActionResult<Timetable> apply(Boolean isConstraintUpdate) {
+				AID dest = new AID(masterAID,AID.ISLOCALNAME);
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+					
+					carCharge = new handleCarCharge(env);
+					unavailableTimes = carCharge.getUnTimes(carID);
+					msg.setContent(""+ unavailableTimes);
+					msg.addReceiver(dest);
+					send(msg);
+
+					return ActionResult.createResult(testTimetable);
+			}
 			
-		} else {
-			System.out.println("There was no input");
+		};
+		try {
+			addBehaviour(new UpdateServerBehaviour(env, carID, callback));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
+//		addBehaviour(new TickerBehaviour(this, 3000) {
+//		    public void onTick() 
+//		    {
+//			System.out.println("We are in the ticker");
+//			ACLMessage msgRec = receive();
+//			
+//			if(msgRec!=null) {
+//				toList(msgRec.getContent(), chargeTimes);
+//				System.out.println(getLocalName() + "charge times are : ");
+//				for (int i=0; i < chargeTimes.size(); i++)
+//				{
+//					System.out.println(chargeTimes.get(i));
+//				}
+//			}
+//		    }
+//		});
 		
-} // end of Setup
+		
+	 } // end of Setup
+	 
 	 
 }// end of class
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		System.out.println(getLocalName()+ ": What time would you like?");
-//		scan = new Scanner(System.in);
-//		input = scan.nextLine();
-//		
-//		if(input != null || input != "")
-//		{
-//			
-//			System.out.println(input);
-//			
-//			// make it a simple message to and from a agent
-//			AID dest = new AID((String) args[0], AID.ISLOCALNAME);
-//			
-//			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-//			msg.setContent(input);
-//			msg.addReceiver(dest);
-//			send(msg);
-//			
-//			
-//			
-////				// Car Object that is intialised at the bottom of this code
-////				//Car car = createCarObject(50.0,100, 20, LocalTime.parse("10:00"), LocalTime.parse("12:00"));
-////				//System.out.println(getLocalName() +": has a charge capacity of "+car.getChargeCapacity());
-////				
-////				System.out.println("Requesting dummy-action to" + numOfArguments + " responders");
-////				
-////				//Create a Request Message
-////				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-////				
-////				for(int i=0; i< args.length; i++)
-////				{
-////					// adding the master as a receiver 
-////					msg.addReceiver(new AID((String) args[i], AID.ISLOCALNAME));
-////				}
-////				
-////				// setting the protocol and the content of the message to what the the user inputted
-////				msg.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
-////				msg.setReplyByDate(new Date(System.currentTimeMillis() + 10000));
-////				// set the message content that the car agent will send change to input
-////				msg.setContent(input);
-////				
-////				addBehaviour(new SendingMessage(this, msg, args));
-		
-		

@@ -1,7 +1,11 @@
 package cos30018.assignment.logic;
 
 import java.io.IOException;
-import com.google.gson.annotations.SerializedName;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.function.Function;
+
+import cos30018.assignment.data.Car;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
 import cos30018.assignment.data.Timetable;
@@ -29,6 +33,7 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 	private static final String MIME_TYPE = "application/json";
 	private Environment data;
 	private CarID id;
+	private Function<Boolean, ActionResult<Timetable>> callback;
 	/**
 	 * Creates a new UpdateServerBehaviour.
 	 * 
@@ -36,13 +41,16 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 	 * @param port The port the server should listen to.
 	 * @throws IOException If the server was unable to be created or started.
 	 */
-	public UpdateServerBehaviour(Environment data, CarID id) throws IOException {
+	// ActionResult<Timetable> negotiateTimetable(boolean constraintsWereUpdated) 
+	public UpdateServerBehaviour(Environment data, CarID id, Function<Boolean, ActionResult<Timetable>> messageSender) throws IOException {
 		super(id.getID());
 		Validate.notNull(data, "data");
 		Validate.notNull(id, "id");
 		System.out.println("Port number: " + id.getID());
+		System.out.println("The car ID is: " + id);
 		this.data = data;
 		this.id = id;
+		this.callback = messageSender;
 	}
 	private void generateError(Responder responder, String err) {
 		responder.respond(Response.Status.BAD_REQUEST, MIME_TYPE, generateError(err));
@@ -51,8 +59,7 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 		return Json.serialize(new JsonError(err));
 	}
 	public ActionResult<Timetable> negotiateTimetable(boolean constraintsWereUpdated) {
-		// TODO for James: Agent comms (along w/ environment data if arg is true), block until something gets returned
-		return null;
+		return callback.apply(constraintsWereUpdated);
 	}
 	@Override
 	protected void handle(IHTTPSession session, Responder responder) {

@@ -1,4 +1,4 @@
-package cos30018.assignment.userinterface;
+ package cos30018.assignment.userinterface;
 
 import java.util.Scanner;
 
@@ -38,7 +38,7 @@ public class AssignmentMain {
 		Runtime rt = Runtime.instance();
 		
 		// Arguments holds the name of the master agent name
-		Object[] agruments = new Object[3];
+		Object[] agruments = new Object[1];
 		agruments[0] = "master";
 		
 		// Profile Object is used to make the agent and it's neccessary attributes 
@@ -59,15 +59,8 @@ public class AssignmentMain {
 			
 			for (int i = 0; i < 6; i++)
 			{
-				System.out.println("car" +i + ": What is your current charge level?");
-				input = scan.nextLine();
-					if(input != null || input != "")
-					{
-						agruments[1] = "car" +i;
-						agruments[2] = input;
-						AgentController carAgent = secondController.createNewAgent("car" +i,CarAgent.class.getName(), agruments);
-						carAgent.start();
-					}
+				AgentController carAgent = secondController.createNewAgent("CarAgent" +i,CarAgent.class.getName(), agruments);
+				carAgent.start();
 					
 				if(i == 5)
 				{
