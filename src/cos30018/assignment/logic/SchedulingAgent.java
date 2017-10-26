@@ -789,6 +789,21 @@ public class SchedulingAgent extends Agent {
 		}
 	}
 	
+	private void logChargeTimes() throws IllegalAccessException {
+		int i = 1;
+		Integer[] value;
+		for (Field f : fChargeTimes) {
+			if (ids.get(i - 1).get(this) != null) {
+				System.out.println("C" + i + "ChargeTimes: ");
+				for (Integer n : (Integer[])f.get(this)) {
+					System.out.println(n);					
+				}
+				i++;
+			} else {
+				break;
+			}
+		}
+	}
 	public void scheduleCars() throws IllegalAccessException {
 		
 		addInitialChargeTimes();
@@ -808,17 +823,7 @@ public class SchedulingAgent extends Agent {
 			}
 		}
 		
-		int i2 = 1;
-		Integer[] value;
-		for (Field f : fChargeTimes) {
-			System.out.println("C" + i2 + "ChargeTimes: ");
-			value = (Integer[])f.get(this);
-			for (int i=0; i < value.length; i++)
-			{
-				System.out.println(value[i]);
-			}
-			i2++;
-		}
+		logChargeTimes();
 		
 		C1timesSat = satArrays2(C1ChargeTimes);
 		if (C2AID != null) {
@@ -837,31 +842,13 @@ public class SchedulingAgent extends Agent {
 			}
 		}
 		
-		i2 = 1;
-		for (Field f : fChargeTimes) {
-			System.out.println("C" + i2 + "ChargeTimes: ");
-			value = (Integer[])f.get(this);
-			for (int i=0; i < value.length; i++)
-			{
-				System.out.println(value[i]);
-			}
-			i2++;
-		}
+		logChargeTimes();
 		
 		System.out.println("Timetables are satisfied: " + timetableSatisified());
 		
 		organizeTimetables(C1ChargeTimes, C2ChargeTimes, C3ChargeTimes, C4ChargeTimes, C5ChargeTimes, C6ChargeTimes);
 		
-		i2 = 1;
-		for (Field f : fChargeTimes) {
-			System.out.println("C" + i2 + "ChargeTimes: ");
-			value = (Integer[])f.get(this);
-			for (int i=0; i < value.length; i++)
-			{
-				System.out.println(value[i]);
-			}
-			i2++;
-		}
+		logChargeTimes();
 		
 		C1timesSat = satArrays2(C1ChargeTimes);
 		if (C2AID != null) {
@@ -969,8 +956,15 @@ public class SchedulingAgent extends Agent {
 		int high;
 		int j;
 		for (Car car : cars) {
+			System.out.println("Car: " + car.getOwner().getID());
+			System.out.println("Cap: " + car.getChargeCapacity());
+			System.out.println("Current: " + car.getCurrentCharge());
 			toCharge = car.getChargeCapacity() - car.getCurrentCharge();
-			chargeHours = (int)Math.ceil(toCharge/car.getChargePerHour());
+			System.out.println("Diff: " + toCharge);
+			System.out.println("Charge rate: " + car.getChargePerHour());
+			// There's an off-by-one error somewhere in the negotiation code - this -1 mitigates it
+			chargeHours = (int)Math.ceil(toCharge/car.getChargePerHour()) - 1;
+			System.out.println("Needed charge time: " + (chargeHours + 1));
 			ids.get(i).set(this, car.getOwner().getCar());
 			prefTimes.get(i).set(this, chargeHours);
 			fChargeTimes.get(i).set(this, new Integer[chargeHours]);
@@ -1088,8 +1082,11 @@ public class SchedulingAgent extends Agent {
 								} else {
 									LinkedList<Entry<CarID, Car>> toReplace = new LinkedList<>();
 									for (Entry<CarID, Car> kvp : env2.getAllCars().entrySet()) {
+										System.out.println(kvp.getKey().getID());
 										if (env.hasCar(kvp.getKey())) {
 											toReplace.add(kvp);
+										} else {
+											env.addCar(kvp.getValue());
 										}
 									}
 									for (Entry<CarID, Car> kvp : toReplace) {

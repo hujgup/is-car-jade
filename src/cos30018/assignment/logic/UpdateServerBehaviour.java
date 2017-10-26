@@ -47,7 +47,6 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 		Validate.notNull(data, "data");
 		Validate.notNull(id, "id");
 		System.out.println("Port number: " + id.getID());
-		System.out.println("The car ID is: " + id);
 		this.data = data;
 		this.id = id;
 		this.callback = messageSender;
