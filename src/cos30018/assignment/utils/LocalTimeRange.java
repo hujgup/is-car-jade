@@ -1,6 +1,8 @@
 package cos30018.assignment.utils;
 
+import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.ui.json.LocalTimeBoundJson;
 import cos30018.assignment.ui.json.LocalTimeRangeJson;
@@ -118,7 +120,7 @@ public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Rang
 	}
 	@Override
 	public boolean isOutside(LocalTimeRange range) {
-		return !isInside(range);
+		return !isInside(range) && !overlaps(range);
 	}
 	@Override
 	public boolean overlaps(LocalTimeRange range) {
@@ -127,6 +129,17 @@ public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Rang
 	@Override
 	public String toString() {
 		return Range.toString(this);
+	}
+	public Duration getSize() {
+		Duration res;
+		if (overflowsDay) {
+			int hours = 24 - high.getPivot().getHour();
+			hours += low.getPivot().getHour();
+			res = Duration.ofHours(hours);
+		} else {
+			res = Duration.ofHours(high.getPivot().getHour() - low.getPivot().getHour() + 1);
+		}
+		return res;
 	}
 	/**
 	 * @return This object, but treated as a discreet range.

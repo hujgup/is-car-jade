@@ -37,26 +37,31 @@ public class CarAgent extends Agent {
 	}
 	
 	 public void setup() {
-		AID master = new AID(getArguments()[0].toString(), false);
+		 
+		AID master = new AID("master", false);
 		Environment env = Environment.createDummyData();
 		CarID thisId = CarID.create(getAID());
 		try {
 			addBehaviour(new UpdateServerBehaviour(env, thisId, new Function<Boolean, ActionResult<Timetable>>() {
 				@Override
 				public ActionResult<Timetable> apply(Boolean isConstraintUpdate) {
+					System.out.println(thisId.getID() + " received UI message.");
 					ActionResult<Timetable> res;
 					try {
 						ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+						msg.addReceiver(master);
 						try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 							ObjectOutputStream oos = new ObjectOutputStream(bos);
 							oos.writeBoolean(isConstraintUpdate);
+							//oos.writeObject(thisId);
 							if (isConstraintUpdate.booleanValue()) {
-								oos.writeObject(thisId);
 								oos.writeObject(env);
 							}
+							bos.flush();
 							msg.setByteSequenceContent(bos.toByteArray());
 						}
 						send(msg);
+						System.out.println("Awaiting response...");
 						ACLMessage response = blockingReceive();
 						try (ByteArrayInputStream bis = new ByteArrayInputStream(response.getByteSequenceContent())) {
 							ObjectInputStream ois = new ObjectInputStream(bis);
@@ -71,6 +76,7 @@ public class CarAgent extends Agent {
 						e.printStackTrace();
 						res = ActionResult.createError("ACL error: " + e.getMessage());
 					}
+					System.out.println("Got result.");
 					return res;
 				}
 			}));

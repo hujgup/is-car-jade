@@ -12,6 +12,7 @@ import cos30018.assignment.data.Timetable;
 import cos30018.assignment.ui.http.Responder;
 import cos30018.assignment.ui.json.Json;
 import cos30018.assignment.ui.json.JsonData;
+import cos30018.assignment.ui.json.Provider;
 import cos30018.assignment.utils.Validate;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -41,7 +42,6 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 	 * @param port The port the server should listen to.
 	 * @throws IOException If the server was unable to be created or started.
 	 */
-	// ActionResult<Timetable> negotiateTimetable(boolean constraintsWereUpdated) 
 	public UpdateServerBehaviour(Environment data, CarID id, Function<Boolean, ActionResult<Timetable>> messageSender) throws IOException {
 		super(id.getID());
 		Validate.notNull(data, "data");
@@ -56,7 +56,7 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 		responder.respond(Response.Status.BAD_REQUEST, MIME_TYPE, generateError(err));
 	}
 	private String generateError(String err) {
-		return Json.serialize(new JsonError(err));
+		return Provider.OBJ.toJson(new JsonError(err), JsonError.class);
 	}
 	public ActionResult<Timetable> negotiateTimetable(boolean constraintsWereUpdated) {
 		return callback.apply(constraintsWereUpdated);

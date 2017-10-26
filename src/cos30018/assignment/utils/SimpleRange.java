@@ -96,7 +96,7 @@ public class SimpleRange<T extends Comparable<T>> implements Range<SimpleRange<T
 	}
 	@Override
 	public boolean isOutside(SimpleRange<T> range) {
-		return !isInside(range);
+		return !isInside(range) && !overlaps(range);
 	}
 	@Override
 	public boolean overlaps(SimpleRange<T> range) {

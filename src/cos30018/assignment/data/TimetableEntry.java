@@ -35,12 +35,11 @@ public class TimetableEntry implements JsonConvertible<TimetableEntry.Json>, Ser
 	 * @param startTime The time that charging will begin.
 	 * @param endTime The time that charging will end.
 	 */
-	public TimetableEntry(CarID id, LocalTime startTime, LocalTime endTime) {
+	public TimetableEntry(CarID id, LocalTimeRange range) {
 		Validate.notNull(id, "id");
-		Validate.notNull(startTime, "startTime");
-		Validate.notNull(endTime, "endTime");
+		Validate.notNull(range, "range");
 		this.id = id;
-		this.range = new LocalTimeRange(startTime, true, endTime, false);
+		this.range = range;
 	}
 	/**
 	 * @return The car this entry pertains to.

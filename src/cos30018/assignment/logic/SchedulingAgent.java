@@ -1,19 +1,31 @@
 package cos30018.assignment.logic;
 
-import javax.swing.JOptionPane;
-
-import java.util.List;
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+import cos30018.assignment.data.Car;
+import cos30018.assignment.data.CarID;
+import cos30018.assignment.data.Environment;
+import cos30018.assignment.data.ImmutableCar;
+import cos30018.assignment.data.Timetable;
+import cos30018.assignment.data.TimetableEntry;
+import cos30018.assignment.utils.LocalTimeRange;
+import cos30018.assignment.utils.SimpleRange;
 import jade.core.AID;
 //import org.Json.JSONArray;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
-import java.io.Reader;
-import java.io.InputStreamReader;
 
 @SuppressWarnings("serial")
 public class SchedulingAgent extends Agent {
@@ -653,95 +665,104 @@ public class SchedulingAgent extends Agent {
 	
 	public void organizeTimetables(Integer[] a, Integer[] b, Integer[] c, Integer[] d, Integer[] e, Integer[] f) {
 		
-		if ((satArrays(f) == false) && (satArrays(a) == true)) {
-	        fillArray(a, f, C6UnavailableTimes);
-		} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
-			fillArray(b, f, C6UnavailableTimes);
-		} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
-			fillArray(c, f, C6UnavailableTimes);
-		} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
-			fillArray(d, f, C6UnavailableTimes);
-		} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
-			fillArray(e, f, C6UnavailableTimes);
+		if (C6AID != null) {
+			if ((satArrays(f) == false) && (satArrays(a) == true)) {
+		        fillArray(a, f, C1UnavailableTimes);
+			} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
+				fillArray(b, f, C2UnavailableTimes);
+			} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
+				fillArray(c, f, C3UnavailableTimes);
+			} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
+				fillArray(d, f, C4UnavailableTimes);
+			} if ((satArrays(f) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
+				fillArray(e, f, C5UnavailableTimes);
+			}
 		}
 		
-		if ((satArrays(e) == false) && (satArrays(a) == true)) {
-	        fillArray(a, e, C6UnavailableTimes);
-		} if ((satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
-			fillArray(b, e, C6UnavailableTimes);
-		} if ((satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
-			fillArray(c, e, C6UnavailableTimes);
-		} if ((satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
-			fillArray(d, e, C6UnavailableTimes);
-		} if ((satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(f) == true)) {
-			fillArray(f, e, C6UnavailableTimes);
+		if (C5AID != null) {
+			if ((satArrays(e) == false) && (satArrays(a) == true)) {
+		        fillArray(a, e, C1UnavailableTimes);
+			} if ((satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
+				fillArray(b, e, C2UnavailableTimes);
+			} if ((satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
+				fillArray(c, e, C3UnavailableTimes);
+			} if ((satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
+				fillArray(d, e, C4UnavailableTimes);
+			} if (C6AID != null && (satArrays(e) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(f) == true)) {
+				fillArray(f, e, C6UnavailableTimes);
+			}
 		}
 		
-		if ((satArrays(d) == false) && (satArrays(a) == true)) {
-	        fillArray(a, d, C6UnavailableTimes);
-		} if ((satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
-			fillArray(b, d, C6UnavailableTimes);
-		} if ((satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
-			fillArray(c, d, C6UnavailableTimes);
-		} if ((satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(e) == true)) {
-			fillArray(e, d, C6UnavailableTimes);
-		} if ((satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
-			fillArray(f, d, C6UnavailableTimes);
+		if (C4AID != null) {
+			if ((satArrays(d) == false) && (satArrays(a) == true)) {
+		        fillArray(a, d, C1UnavailableTimes);
+			} if ((satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
+				fillArray(b, d, C2UnavailableTimes);
+			} if ((satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
+				fillArray(c, d, C3UnavailableTimes);
+			} if (C5AID != null && (satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(e) == true)) {
+				fillArray(e, d, C5UnavailableTimes);
+			} if (C6AID != null && (satArrays(d) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
+				fillArray(f, d, C6UnavailableTimes);
+			}
 		}
 		
-		if ((satArrays(c) == false) && (satArrays(a) == true)) {
-	        fillArray(a, c, C6UnavailableTimes);
-		} if ((satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
-			fillArray(b, c, C6UnavailableTimes);
-		} if ((satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(d) == true)) {
-			fillArray(d, c, C6UnavailableTimes);
-		} if ((satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
-			fillArray(e, c, C6UnavailableTimes);
-		} if ((satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(d) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
-			fillArray(f, c, C6UnavailableTimes);
+		if (C3AID != null) {
+			if ((satArrays(c) == false) && (satArrays(a) == true)) {
+		        fillArray(a, c, C1UnavailableTimes);
+			} if ((satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == true)) {
+				fillArray(b, c, C2UnavailableTimes);
+			} if (C4AID != null && (satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(d) == true)) {
+				fillArray(d, c, C4UnavailableTimes);
+			} if (C5AID != null && (satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
+				fillArray(e, c, C5UnavailableTimes);
+			} if (C6AID != null && (satArrays(c) == false) && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(d) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
+				fillArray(f, c, C6UnavailableTimes);
+			}
 		}
 		
-		if ((satArrays(b) == false) && (satArrays(a) == true)) {
-	        fillArray(a, b, C6UnavailableTimes);
-		} if ((satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == true)) {
-			fillArray(c, b, C6UnavailableTimes);
-		} if ((satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
-			fillArray(d, b, C6UnavailableTimes);
-		} if ((satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
-			fillArray(e, b, C6UnavailableTimes);
-		} if ((satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
-			fillArray(f, b, C6UnavailableTimes);
+		if (C2AID != null) {
+			if ((satArrays(b) == false) && (satArrays(a) == true)) {
+		        fillArray(a, b, C1UnavailableTimes);
+			} if (C3AID != null && (satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == true)) {
+				fillArray(c, b, C3UnavailableTimes);
+			} if (C4AID != null && (satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
+				fillArray(d, b, C4UnavailableTimes);
+			} if (C5AID != null && (satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
+				fillArray(e, b, C5UnavailableTimes);
+			} if (C6AID != null && (satArrays(b) == false) && (satArrays(a) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
+				fillArray(f, b, C6UnavailableTimes);
+			}
 		}
 		
-		if ((satArrays(a) == false) && (satArrays(b) == true)) {
-	        fillArray(b, a, C6UnavailableTimes);
-		} if ((satArrays(a
-				) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
-			fillArray(c, a, C6UnavailableTimes);
-		} if ((satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
-			fillArray(d, a, C6UnavailableTimes);
-		} if ((satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
-			fillArray(e, a, C6UnavailableTimes);
-		} if ((satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
+		if (C2AID != null && (satArrays(a) == false) && (satArrays(b) == true)) {
+	        fillArray(b, a, C2UnavailableTimes);
+		} if (C3AID != null && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == true)) {
+			fillArray(c, a, C3UnavailableTimes);
+		} if (C4AID != null && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == true)) {
+			fillArray(d, a, C4UnavailableTimes);
+		} if (C5AID != null && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == true)) {
+			fillArray(e, a, C5UnavailableTimes);
+		} if (C6AID != null && (satArrays(a) == false) && (satArrays(b) == false) && (satArrays(c) == false) && (satArrays(d) == false) && (satArrays(e) == false) && (satArrays(f) == true)) {
 			fillArray(f, a, C6UnavailableTimes);
 		}
 		
 		if (satArrays2(a) == false) {
 			setErrorMsg("Can't satisfy Car1's timetable");
 		} else {}
-		if (satArrays2(b) == false) {
+		if (C2AID != null && satArrays2(b) == false) {
 			setErrorMsg(getErrorMsg() + "--Can't satisfy Car2's timetable");
 		} else {}
-		if (satArrays2(c) == false) {
+		if (C3AID != null && satArrays2(c) == false) {
 			setErrorMsg(getErrorMsg() + "--Can't satisfy Car3's timetable");
 		} else {}
-		if (satArrays2(d) == false) {
+		if (C4AID != null && satArrays2(d) == false) {
 			setErrorMsg(getErrorMsg() + "--Can't satisfy Car4's timetable");
 		} else {}
-		if (satArrays2(e) == false) {
+		if (C5AID != null && satArrays2(e) == false) {
 			setErrorMsg(getErrorMsg() + "--Can't satisfy Car5's timetable");
 		} else {}
-		if (satArrays2(f) == false) {
+		if (C6AID != null && satArrays2(f) == false) {
 			setErrorMsg(getErrorMsg() + "--Can't satisfy Car6's timetable");
 		} else {}
 	}
@@ -768,140 +789,96 @@ public class SchedulingAgent extends Agent {
 		}
 	}
 	
-	public void schedueleCars() {
+	public void scheduleCars() throws IllegalAccessException {
 		
 		addInitialChargeTimes();
-		addStepTwoChargeTimes();
-		addStepThreeChargeTimes();
-		addStepFourChargeTimes();
-		addStepFiveChargeTimes();
-		addStepSixChargeTimes();
-		
-		System.out.println("C1ChargeTimes: ");
-		for (int i=0; i < C1ChargeTimes.length; i++)
-		{
-			System.out.println(C1ChargeTimes[i]);
+		if (C2AID != null) {
+			addStepTwoChargeTimes();
+			if (C3AID != null) {
+				addStepThreeChargeTimes();
+				if (C4AID != null) {
+					addStepFourChargeTimes();
+					if (C5AID != null) {
+						addStepFiveChargeTimes();
+						if (C6AID != null) {
+							addStepSixChargeTimes();
+						}
+					}
+				}
+			}
 		}
 		
-		System.out.println("C2ChargeTimes: ");
-		for (int i=0; i < C2ChargeTimes.length; i++)
-		{
-			System.out.println(C2ChargeTimes[i]);
-		}
-		
-		System.out.println("C3ChargeTimes: ");
-		for (int i=0; i < C3ChargeTimes.length; i++)
-		{
-			System.out.println(C3ChargeTimes[i]);
-		}
-		
-		System.out.println("C4ChargeTimes: ");
-		for (int i=0; i < C4ChargeTimes.length; i++)
-		{
-			System.out.println(C4ChargeTimes[i]);
-		}
-		
-		System.out.println("C5ChargeTimes: ");
-		for (int i=0; i < C5ChargeTimes.length; i++)
-		{
-			System.out.println(C5ChargeTimes[i]);
-		}
-		
-		System.out.println("C6ChargeTimes: ");
-		for (int i=0; i < C6ChargeTimes.length; i++)
-		{
-			System.out.println(C6ChargeTimes[i]);
+		int i2 = 1;
+		Integer[] value;
+		for (Field f : fChargeTimes) {
+			System.out.println("C" + i2 + "ChargeTimes: ");
+			value = (Integer[])f.get(this);
+			for (int i=0; i < value.length; i++)
+			{
+				System.out.println(value[i]);
+			}
+			i2++;
 		}
 		
 		C1timesSat = satArrays2(C1ChargeTimes);
-		C2timesSat = satArrays2(C2ChargeTimes);
-		C3timesSat = satArrays2(C3ChargeTimes);
-		C4timesSat = satArrays2(C4ChargeTimes);
-		C5timesSat = satArrays2(C5ChargeTimes);
-		C6timesSat = satArrays2(C6ChargeTimes);
-		
-		System.out.println("C1ChargeTimes: ");
-		for (int i=0; i < C1ChargeTimes.length; i++)
-		{
-			System.out.println(C1ChargeTimes[i]);
+		if (C2AID != null) {
+			C2timesSat = satArrays2(C2ChargeTimes);
+			if (C3AID != null) {
+				C3timesSat = satArrays2(C3ChargeTimes);
+				if (C4AID != null) {
+					C4timesSat = satArrays2(C4ChargeTimes);
+					if (C5AID != null) {
+						C5timesSat = satArrays2(C5ChargeTimes);
+						if (C6AID != null) {
+							C6timesSat = satArrays2(C6ChargeTimes);
+						}
+					}
+				}
+			}
 		}
 		
-		System.out.println("C2ChargeTimes: ");
-		for (int i=0; i < C2ChargeTimes.length; i++)
-		{
-			System.out.println(C2ChargeTimes[i]);
-		}
-		
-		System.out.println("C3ChargeTimes: ");
-		for (int i=0; i < C3ChargeTimes.length; i++)
-		{
-			System.out.println(C3ChargeTimes[i]);
-		}
-		
-		System.out.println("C4ChargeTimes: ");
-		for (int i=0; i < C4ChargeTimes.length; i++)
-		{
-			System.out.println(C4ChargeTimes[i]);
-		}
-		
-		System.out.println("C5ChargeTimes: ");
-		for (int i=0; i < C5ChargeTimes.length; i++)
-		{
-			System.out.println(C5ChargeTimes[i]);
-		}
-		
-		System.out.println("C6ChargeTimes: ");
-		for (int i=0; i < C6ChargeTimes.length; i++)
-		{
-			System.out.println(C6ChargeTimes[i]);
+		i2 = 1;
+		for (Field f : fChargeTimes) {
+			System.out.println("C" + i2 + "ChargeTimes: ");
+			value = (Integer[])f.get(this);
+			for (int i=0; i < value.length; i++)
+			{
+				System.out.println(value[i]);
+			}
+			i2++;
 		}
 		
 		System.out.println("Timetables are satisfied: " + timetableSatisified());
 		
 		organizeTimetables(C1ChargeTimes, C2ChargeTimes, C3ChargeTimes, C4ChargeTimes, C5ChargeTimes, C6ChargeTimes);
 		
-		System.out.println("C1ChargeTimes: ");
-		for (int i=0; i < C1ChargeTimes.length; i++)
-		{
-			System.out.println(C1ChargeTimes[i]);
-		}
-		
-		System.out.println("C2ChargeTimes: ");
-		for (int i=0; i < C2ChargeTimes.length; i++)
-		{
-			System.out.println(C2ChargeTimes[i]);
-		}
-		
-		System.out.println("C3ChargeTimes: ");
-		for (int i=0; i < C3ChargeTimes.length; i++)
-		{
-			System.out.println(C3ChargeTimes[i]);
-		}
-		
-		System.out.println("C4ChargeTimes: ");
-		for (int i=0; i < C4ChargeTimes.length; i++)
-		{
-			System.out.println(C4ChargeTimes[i]);
-		}
-		
-		System.out.println("C5ChargeTimes: ");
-		for (int i=0; i < C5ChargeTimes.length; i++)
-		{
-			System.out.println(C5ChargeTimes[i]);
-		}
-		
-		System.out.println("C6ChargeTimes: ");
-		for (int i=0; i < C6ChargeTimes.length; i++)
-		{
-			System.out.println(C6ChargeTimes[i]);
+		i2 = 1;
+		for (Field f : fChargeTimes) {
+			System.out.println("C" + i2 + "ChargeTimes: ");
+			value = (Integer[])f.get(this);
+			for (int i=0; i < value.length; i++)
+			{
+				System.out.println(value[i]);
+			}
+			i2++;
 		}
 		
 		C1timesSat = satArrays2(C1ChargeTimes);
-		C2timesSat = satArrays2(C2ChargeTimes);
-		C3timesSat = satArrays2(C3ChargeTimes);
-		C4timesSat = satArrays2(C4ChargeTimes);
-		C5timesSat = satArrays2(C5ChargeTimes);
-		C6timesSat = satArrays2(C6ChargeTimes);
+		if (C2AID != null) {
+			C2timesSat = satArrays2(C2ChargeTimes);
+			if (C3AID != null) {
+				C3timesSat = satArrays2(C3ChargeTimes);
+				if (C4AID != null) {
+					C4timesSat = satArrays2(C4ChargeTimes);
+					if (C5AID != null) {
+						C5timesSat = satArrays2(C5ChargeTimes);
+						if (C6AID != null) {
+							C6timesSat = satArrays2(C6ChargeTimes);
+						}
+					}
+				}
+			}
+		}
 		
 		System.out.println("Timetables are satisfied: " + timetableSatisified());
 		System.out.println("" + getErrorMsg());
@@ -917,37 +894,223 @@ public class SchedulingAgent extends Agent {
 		{
 		    Car1ChargeTimes.add(C1ChargeTimes[i]);
 		}
-		for (int i=0; i<C2ChargeTimes.length; i++)
-		{
-		    Car2ChargeTimes.add(C2ChargeTimes[i]);
-		}
-		for (int i=0; i<C3ChargeTimes.length; i++)
-		{
-		    Car3ChargeTimes.add(C3ChargeTimes[i]);
-		}
-		for (int i=0; i<C4ChargeTimes.length; i++)
-		{
-		    Car4ChargeTimes.add(C4ChargeTimes[i]);
-		}
-		for (int i=0; i<C5ChargeTimes.length; i++)
-		{
-		    Car5ChargeTimes.add(C5ChargeTimes[i]);
-		}
-		for (int i=0; i<C6ChargeTimes.length; i++)
-		{
-		    Car6ChargeTimes.add(C6ChargeTimes[i]);
+		if (C2AID != null) {
+			for (int i=0; i<C2ChargeTimes.length; i++)
+			{
+			    Car2ChargeTimes.add(C2ChargeTimes[i]);
+			}
+			if (C3AID != null) {
+				for (int i=0; i<C3ChargeTimes.length; i++)
+				{
+				    Car3ChargeTimes.add(C3ChargeTimes[i]);
+				}
+				if (C4AID != null) {
+					for (int i=0; i<C4ChargeTimes.length; i++)
+					{
+					    Car4ChargeTimes.add(C4ChargeTimes[i]);
+					}
+					if (C5AID != null) {
+						for (int i=0; i<C5ChargeTimes.length; i++)
+						{
+						    Car5ChargeTimes.add(C5ChargeTimes[i]);
+						}
+						if (C6AID != null) {
+							for (int i=0; i<C6ChargeTimes.length; i++)
+							{
+							    Car6ChargeTimes.add(C6ChargeTimes[i]);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	
+	private Environment env;
+	// Reflection because for some reason the rest of this code doesn't use object arrays
+	private static ArrayList<Field> ids = new ArrayList<>(6);
+	private static ArrayList<Field> prefTimes = new ArrayList<>(6);
+	private static ArrayList<Field> uTimes = new ArrayList<>(6);
+	private static ArrayList<Field> fChargeTimes = new ArrayList<>(6);
+	static {
+		Class<?> c = SchedulingAgent.class;
+		try {
+			for (int i = 1; i <= 6; i++) {
+				ids.add(c.getDeclaredField("C" + i + "AID"));
+				prefTimes.add(c.getDeclaredField("prefC" + i + "ChargeTimes"));
+				uTimes.add(c.getDeclaredField("C" + i + "UnavailableTimes"));
+				fChargeTimes.add(c.getDeclaredField("C" + i + "ChargeTimes"));
+			}
+		} catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
 	
+	private void writeTimetable(ObjectOutputStream oos, Timetable tt) throws IOException {
+		oos.writeBoolean(false);
+		oos.writeObject(tt);
+	}
+	private void writeError(ObjectOutputStream oos, String msg) throws IOException {
+		oos.writeBoolean(true);
+		oos.writeObject(msg);
+	}
+	private void convertSentValues() throws IllegalAccessException {
+		Collection<Car> cars = env.getAllCars().values();
+		for (Field id : ids) {
+			id.set(this, null);
+		}
+		int i = 0;
+		ArrayList<Integer> selfUTimes;
+		SimpleRange<Integer> uTime;
+		double toCharge;
+		int chargeHours;
+		int low;
+		int high;
+		int j;
+		for (Car car : cars) {
+			toCharge = car.getChargeCapacity() - car.getCurrentCharge();
+			chargeHours = (int)Math.ceil(toCharge/car.getChargePerHour());
+			ids.get(i).set(this, car.getOwner().getCar());
+			prefTimes.get(i).set(this, chargeHours);
+			fChargeTimes.get(i).set(this, new Integer[chargeHours]);
+			selfUTimes = new ArrayList<>();
+			for (LocalTimeRange range : car.getUnavailableTimes()) {
+				uTime = range.toHourRange();
+				// +1 here because Java time is zero-based but code here is one-based (for some reason)
+				low = uTime.getLowerBound().getPivot() + 1;
+				high = uTime.getUpperBound().getPivot() + 1;
+				if (low <= high) {
+					for (j = low; j <= high; j++) {
+						selfUTimes.add(j);
+					}
+				} else {
+					for (j = low; j <= 24; j++) {
+						selfUTimes.add(j);
+					}
+					for (j = 0; j <= high; j++) {
+						selfUTimes.add(j);
+					}
+				}
+			}
+			uTimes.get(i).set(this, selfUTimes);
+			i++;
+		}
+	}
+	private Timetable createTimetable() throws IllegalAccessException {
+		Timetable res = new Timetable();
+		int i = 0;
+		for (Field cTime : fChargeTimes) {
+			if (i < env.getAllCars().size()) {
+				Arrays.sort((Integer[])cTime.get(this));
+				i++;
+			} else {
+				break;
+			}
+		}
+		ArrayList<LocalTimeRange> ranges = new ArrayList<>();
+		i = 0;
+		Integer[] times;
+		int low = -1;
+		int high = -1;
+		int last = -1;
+		int expected;
+		int j;
+		for (ImmutableCar car : env.getAllCars().values()) {
+			times = (Integer[])fChargeTimes.get(i).get(this);
+			for (int time : times) {
+				time--; // 1-indexed back to 0-indexed
+				if (low == -1) {
+					low = time;
+				} else if (last != time - 1) {
+					high = time - 1;
+					if (low == 0) {
+						// Check for wrap around midnight
+						j = times.length - 1;
+						expected = 24;
+						while (j > 0 && times[i] == expected) {
+							low = expected - 1;
+							expected--;
+							j--;
+						}
+					}
+					ranges.add(new LocalTimeRange(LocalTime.of(low, 0), true, LocalTime.of(high, 0), true));
+					low = time;
+				}
+				last = time;
+			}
+			for (LocalTimeRange range : ranges) {
+				res.addEntry(new TimetableEntry(car.getOwner(), range));
+			}
+			ranges.clear();
+			i++;
+		}
+		return res;
+	}
 	@Override
 	protected void setup() {
+		env = null;
 		addBehaviour(new CyclicBehaviour() {
-			
-			int runTime = 0;
 			@Override
 			public void action() {
 				ACLMessage msg = blockingReceive();
+				System.out.println("Got message");
+				try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+					ObjectOutputStream oos = new ObjectOutputStream(bos);
+					ACLMessage response = msg.createReply();
+					try {
+						response.setPerformative(ACLMessage.INFORM);
+						try (ByteArrayInputStream bis = new ByteArrayInputStream(msg.getByteSequenceContent())) {
+							ObjectInputStream ois = new ObjectInputStream(bis);
+							boolean isConstraintUpdate = ois.readBoolean();
+							if (isConstraintUpdate) {
+								Environment env2 = (Environment)ois.readObject();
+								// Flooring unavailable times to the hour
+								for (ImmutableCar car : env2.getAllCars().values()) {
+									for (LocalTimeRange range : car.getUnavailableTimes()) {
+										range.getLowerBound().getPivot().minusMinutes(range.getLowerBound().getPivot().getMinute());
+										range.getLowerBound().setInclusive(true);
+										range.getUpperBound().getPivot().minusMinutes(range.getUpperBound().getPivot().getMinute());
+										range.getUpperBound().setInclusive(true);
+									}
+								}
+								// Merging environments
+								if (env == null) {
+									env = env2;
+								} else {
+									LinkedList<Entry<CarID, Car>> toReplace = new LinkedList<>();
+									for (Entry<CarID, Car> kvp : env2.getAllCars().entrySet()) {
+										if (env.hasCar(kvp.getKey())) {
+											toReplace.add(kvp);
+										}
+									}
+									for (Entry<CarID, Car> kvp : toReplace) {
+										env.removeCar(kvp.getKey());
+										env.addCar(kvp.getValue());
+									}
+								}
+							}
+							if (env != null) {
+								convertSentValues();
+								scheduleCars();
+								writeTimetable(oos, createTimetable());
+							} else {
+								writeError(oos, "Cannot negotiate a timetable when the environment has not been set.");								
+							}
+						}
+					} catch (IOException | ClassNotFoundException | IllegalAccessException e) {
+						e.printStackTrace();
+						writeError(oos, e.getMessage());
+					}
+					System.out.println("Sending reply");
+					bos.flush();
+					response.setByteSequenceContent(bos.toByteArray());
+					send(response);
+				} catch (IOException e) {
+					e.printStackTrace();					
+				}
+				
+				/*
 				if(msg!=null) {
 					if(C1AID != null) {
 						if(C2AID != null) {
@@ -989,7 +1152,7 @@ public class SchedulingAgent extends Agent {
 					if((C1AID != null) && (C2AID != null) && (C3AID != null) && (C4AID != null) && (C5AID != null) && (C6AID != null) && (runTime == 0)) {
 						runTime++;
 						
-						schedueleCars();
+						scheduleCars();
 						
 						System.out.println("\n");
 						
@@ -1006,6 +1169,7 @@ public class SchedulingAgent extends Agent {
 						send(msg1);
 					}
 				}	
+			*/
 			}
 		});	
 	}

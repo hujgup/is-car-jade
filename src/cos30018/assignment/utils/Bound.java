@@ -30,11 +30,17 @@ public class Bound<T extends Comparable<T>> implements Serializable {
 	public T getPivot() {
 		return value;
 	}
+	public void setPivot(T value) {
+		this.value = value;
+	}
 	/**
 	 * @return Whether or not this bound includes the pivot or not.
 	 */
 	public boolean isInclusive() {
 		return inclusive;
+	}
+	public void setInclusive(boolean value) {
+		inclusive = value;
 	}
 	/**
 	 * Checks whether the given argument is below this bound.
