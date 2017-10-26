@@ -45,7 +45,15 @@ public class CarAgent extends Agent {
 	}
 	
 	 public void setup() {
+		 
+		 
+		 
 		Object[] args = getArguments();
+		AID master = new AID(getArguments()[0].toString(), false);
+		Environment env = Environment.createDummyData();
+		Agent a = this;
+		
+		
 		
 		// Test Time Table
 		Timetable testTimetable = new Timetable();
