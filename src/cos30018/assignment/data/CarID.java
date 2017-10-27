@@ -16,22 +16,7 @@ import jade.core.AID;
  */
 public class CarID implements JsonConvertible<Integer>, Serializable {
 	private static final long serialVersionUID = -2949760205672878537L;
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeInt(id);
-		out.writeObject(carAgent);
-	}
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		id = in.readInt();
-		carAgent = (AID)in.readObject();
-		if (!ids.containsKey(carAgent)) {
-			ids.put(carAgent, id);
-		}
-		if (!carIds.containsKey(id)) {
-			carIds.put(id, this);
-		}
-	}
-	private static HashMap<AID, Integer> ids = new HashMap<>();
-	private static HashMap<Integer, CarID> carIds = new HashMap<>();
+	private static HashMap<Integer, AID> ids = new HashMap<>();
 	private int id;
 	private transient AID carAgent;
 	private CarID(int id, AID carAgent) {
@@ -52,11 +37,9 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 		do {
 			// Random, but no duplicates
 			id = (int)(Math.random()*20000) + 8080;			
-		} while (carIds.containsKey(id));
-		ids.put(carAgent, id);
-		CarID res = new CarID(id, carAgent);
-		carIds.put(id, res);
-		return res;
+		} while (ids.containsKey(id));
+		ids.put(id, carAgent);
+		return new CarID(id, carAgent);
 	}
 	/**
 	 * Gets an existing CarID from its integral ID value.
@@ -65,7 +48,7 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 	 * @return The CarID corresponding to id, or null if none exists.
 	 */
 	public static CarID fromID(int id) {
-		return carIds.get(id);
+		return new CarID(id, ids.get(id));
 	}
 	/**
 	 * @return The unique ID of a car/scheduler pair.
