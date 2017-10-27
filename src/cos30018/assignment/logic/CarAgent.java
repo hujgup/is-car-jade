@@ -5,48 +5,40 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
-import cos30018.assignment.data.Timetable;
-import cos30018.assignment.utils.handleCarCharge;
+import cos30018.assignment.ui.json.TimetableEntryJson;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
 public class CarAgent extends Agent {
-	//private int numOfArguments;
-	//private SequentialBehaviour listener;
-	private List<Integer> unavailableTimes;
-	private List<Integer> finalTimes;
-	private handleCarCharge carCharge;
-	private List<Integer> chargeTimes = new ArrayList<>();
-	
-	public void toList(String s, List<Integer> l) {
-		String replace = s.replace("[","");
-		String replace1 = replace.replace("]","");
-		String replace2 = replace1.replace(" ","");
-		List<String> arrayList = new ArrayList<String>    (Arrays.asList(replace2.split(",")));
-		for(String fav:arrayList){
-		    l.add(Integer.parseInt(fav.trim()));
+	private List<TimetableEntryJson> toEntryList(Map<CarID, List<Integer>> map) {
+		LinkedList<TimetableEntryJson> res = new LinkedList<>();
+		for (Entry<CarID, List<Integer>> kvp : map.entrySet()) {
+			res.add(new TimetableEntryJson(kvp.getKey().getID(), kvp.getValue()));
 		}
+		return res;
 	}
-	
-	 public void setup() {
-		 
+	@Override
+	public void setup() {
 		AID master = new AID("master", false);
 		Environment env = Environment.createDummyData();
 		CarID thisId = CarID.create(getAID());
+		System.out.println("Port number: " + thisId.getID());
 		try {
-			addBehaviour(new UpdateServerBehaviour(env, thisId, new Function<Boolean, ActionResult<Timetable>>() {
+			addBehaviour(new UpdateServerBehaviour(env, thisId, new Function<Boolean, ActionResult<List<TimetableEntryJson>>>() {
+				@SuppressWarnings("unchecked")
 				@Override
-				public ActionResult<Timetable> apply(Boolean isConstraintUpdate) {
+				public ActionResult<List<TimetableEntryJson>> apply(Boolean isConstraintUpdate) {
 					System.out.println(thisId.getID() + " received UI message.");
-					ActionResult<Timetable> res;
+					ActionResult<List<TimetableEntryJson>> res;
 					try {
 						ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 						msg.addReceiver(master);
@@ -69,7 +61,7 @@ public class CarAgent extends Agent {
 							if (isError) {
 								res = ActionResult.createError((String)ois.readObject());
 							} else {
-								res = ActionResult.createResult((Timetable)ois.readObject());
+								res = ActionResult.createResult(toEntryList((Map<CarID, List<Integer>>)ois.readObject()));
 							}
 						}
 					} catch (IOException | ClassNotFoundException e) {

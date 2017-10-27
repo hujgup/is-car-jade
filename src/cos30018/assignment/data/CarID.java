@@ -84,12 +84,7 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 	}
 	@Override
 	public int hashCode() {
-		// Generated
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		result = prime * result + ((carAgent == null) ? 0 : carAgent.hashCode());
-		return result;
+		return id;
 	}
 	public boolean equals(CarID other) {
 		return id == other.id;

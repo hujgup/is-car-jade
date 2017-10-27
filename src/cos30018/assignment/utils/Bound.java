@@ -50,7 +50,7 @@ public class Bound<T extends Comparable<T>> implements Serializable {
 	 */
 	public boolean argIsBelow(T arg) {
 		int cmp = value.compareTo(arg);
-		return inclusive ? cmp < 0 : cmp <= 0;
+		return inclusive ? cmp > 0 : cmp >= 0;
 	}
 	/**
 	 * Checks whether the given argument is above this bound.
@@ -60,6 +60,6 @@ public class Bound<T extends Comparable<T>> implements Serializable {
 	 */
 	public boolean argIsAbove(T arg) {
 		int cmp = value.compareTo(arg);
-		return inclusive ? cmp > 0 : cmp >= 0;		
+		return inclusive ? cmp < 0 : cmp <= 0;		
 	}
 }

@@ -20,7 +20,6 @@ public class Environment implements JsonConvertible<JsonData>, Serializable {
 	private boolean isDummy;
 	private double maxGridLoad;
 	private HashMap<CarID, Car> cars;
-	private Timetable timetable;
 	/**
 	 * Creates a new Environment.
 	 * 
@@ -37,7 +36,6 @@ public class Environment implements JsonConvertible<JsonData>, Serializable {
 			this.cars.put(car.getOwner(), car);
 			i++;
 		}
-		timetable = new Timetable();
 		isDummy = false;
 	}
 	/**
@@ -138,12 +136,6 @@ public class Environment implements JsonConvertible<JsonData>, Serializable {
 	 */
 	public Map<CarID, Car> getAllCars() {
 		return Collections.unmodifiableMap(cars);
-	}
-	/**
-	 * @return The timetable being created or updated by this environment.
-	 */
-	public Timetable getTimetable() {
-		return timetable;
 	}
 	/**
 	 * @param withCar The car to union with.

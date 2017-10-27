@@ -9,20 +9,18 @@ import java.lang.reflect.Field;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Semaphore;
+import java.util.function.Consumer;
 import cos30018.assignment.data.Car;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
 import cos30018.assignment.data.ImmutableCar;
-import cos30018.assignment.data.Timetable;
-import cos30018.assignment.data.TimetableEntry;
 import cos30018.assignment.utils.LocalTimeRange;
-import cos30018.assignment.utils.SimpleRange;
 import jade.core.AID;
-//import org.Json.JSONArray;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -934,62 +932,13 @@ public class SchedulingAgent extends Agent {
 		}
 	}
 	
-	private void writeTimetable(ObjectOutputStream oos, Timetable tt) throws IOException {
+	private void writeTimetable(ObjectOutputStream oos, Map<CarID, List<Integer>> tt) throws IOException {
 		oos.writeBoolean(false);
 		oos.writeObject(tt);
 	}
 	private void writeError(ObjectOutputStream oos, String msg) throws IOException {
 		oos.writeBoolean(true);
 		oos.writeObject(msg);
-	}
-	private void convertSentValues() throws IllegalAccessException {
-		Collection<Car> cars = env.getAllCars().values();
-		for (Field id : ids) {
-			id.set(this, null);
-		}
-		int i = 0;
-		ArrayList<Integer> selfUTimes;
-		SimpleRange<Integer> uTime;
-		double toCharge;
-		int chargeHours;
-		int low;
-		int high;
-		int j;
-		for (Car car : cars) {
-			System.out.println("Car: " + car.getOwner().getID());
-			System.out.println("Cap: " + car.getChargeCapacity());
-			System.out.println("Current: " + car.getCurrentCharge());
-			toCharge = car.getChargeCapacity() - car.getCurrentCharge();
-			System.out.println("Diff: " + toCharge);
-			System.out.println("Charge rate: " + car.getChargePerHour());
-			// There's an off-by-one error somewhere in the negotiation code - this -1 mitigates it
-			chargeHours = (int)Math.ceil(toCharge/car.getChargePerHour()) - 1;
-			System.out.println("Needed charge time: " + (chargeHours + 1));
-			ids.get(i).set(this, car.getOwner().getCar());
-			prefTimes.get(i).set(this, chargeHours);
-			fChargeTimes.get(i).set(this, new Integer[chargeHours]);
-			selfUTimes = new ArrayList<>();
-			for (LocalTimeRange range : car.getUnavailableTimes()) {
-				uTime = range.toHourRange();
-				// +1 here because Java time is zero-based but code here is one-based (for some reason)
-				low = uTime.getLowerBound().getPivot() + 1;
-				high = uTime.getUpperBound().getPivot() + 1;
-				if (low <= high) {
-					for (j = low; j <= high; j++) {
-						selfUTimes.add(j);
-					}
-				} else {
-					for (j = low; j <= 24; j++) {
-						selfUTimes.add(j);
-					}
-					for (j = 0; j <= high; j++) {
-						selfUTimes.add(j);
-					}
-				}
-			}
-			uTimes.get(i).set(this, selfUTimes);
-			i++;
-		}
 	}
 	private void resolveRange(int low, int high, Integer[] times, ArrayList<LocalTimeRange> ranges) {
 		if (low == 0) {
@@ -1004,50 +953,6 @@ public class SchedulingAgent extends Agent {
 		}
 		System.out.println("[" + low + ", " + high + "]");
 		ranges.add(new LocalTimeRange(LocalTime.of(low, 0), true, LocalTime.of(high, 0), true));
-	}
-	private Timetable createTimetable() throws IllegalAccessException {
-		Timetable res = new Timetable();
-		int i = 0;
-		for (Field cTime : fChargeTimes) {
-			if (i < env.getAllCars().size()) {
-				Arrays.sort((Integer[])cTime.get(this));
-				i++;
-			} else {
-				break;
-			}
-		}
-		ArrayList<LocalTimeRange> ranges = new ArrayList<>();
-		i = 0;
-		Integer[] times;
-		int low = -1;
-		int high = -1;
-		int last = -1;
-		for (ImmutableCar car : env.getAllCars().values()) {
-			times = (Integer[])fChargeTimes.get(i).get(this);
-			System.out.println(times.length);
-			for (int time : times) {
-				high = -1;
-				time--; // 1-indexed back to 0-indexed
-				if (low == -1) {
-					low = time;
-				} else if (last != time - 1) {
-					high = time - 1;
-					resolveRange(low, high, times, ranges);
-					low = time;
-				}
-				last = time;
-			}
-			if (high == -1) {
-				high = times[times.length - 1];
-				resolveRange(low, high, times, ranges);
-			}
-			for (LocalTimeRange range : ranges) {
-				res.addEntry(new TimetableEntry(car.getOwner(), range));
-			}
-			ranges.clear();
-			i++;
-		}
-		return res;
 	}
 	@Override
 	protected void setup() {
@@ -1080,30 +985,37 @@ public class SchedulingAgent extends Agent {
 								if (env == null) {
 									env = env2;
 								} else {
+									System.out.println("Init");
+									env.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
+									System.out.println("Spec'd");
+									env2.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
 									LinkedList<Entry<CarID, Car>> toReplace = new LinkedList<>();
 									for (Entry<CarID, Car> kvp : env2.getAllCars().entrySet()) {
-										System.out.println(kvp.getKey().getID());
 										if (env.hasCar(kvp.getKey())) {
+											System.out.println("Has " + kvp.getKey().getID());
 											toReplace.add(kvp);
 										} else {
+											System.out.println("New " + kvp.getKey().getID());
 											env.addCar(kvp.getValue());
 										}
 									}
+									System.out.println("To replace");
+									toReplace.stream().forEach(x -> System.out.println(x.getKey().getID()));
 									for (Entry<CarID, Car> kvp : toReplace) {
 										env.removeCar(kvp.getKey());
 										env.addCar(kvp.getValue());
 									}
+									System.out.println("End");
+									env.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
 								}
 							}
 							if (env != null) {
-								convertSentValues();
-								scheduleCars();
-								writeTimetable(oos, createTimetable());
+								writeTimetable(oos, new ConstraintSolver(env).get());
 							} else {
 								writeError(oos, "Cannot negotiate a timetable when the environment has not been set.");								
 							}
 						}
-					} catch (IOException | ClassNotFoundException | IllegalAccessException e) {
+					} catch (IOException | ClassNotFoundException e) {
 						e.printStackTrace();
 						writeError(oos, e.getMessage());
 					}
@@ -1114,67 +1026,6 @@ public class SchedulingAgent extends Agent {
 				} catch (IOException e) {
 					e.printStackTrace();					
 				}
-				
-				/*
-				if(msg!=null) {
-					if(C1AID != null) {
-						if(C2AID != null) {
-							if(C3AID != null) {
-								if(C4AID != null) {
-									if(C5AID != null) {
-										if(C6AID != null) {
-										}
-										else {
-											C6AID = msg.getSender();
-											toList(msg.getContent(), C6UnavailableTimes);
-										}
-									}
-									else {
-										C5AID = msg.getSender();
-										toList(msg.getContent(), C5UnavailableTimes);
-									}
-								}
-								else {
-									C4AID = msg.getSender();
-									toList(msg.getContent(), C4UnavailableTimes);
-								}
-							}
-							else {
-								C3AID = msg.getSender();
-								toList(msg.getContent(), C3UnavailableTimes);
-							}
-						}
-						else {
-							C2AID = msg.getSender();
-							toList(msg.getContent(), C2UnavailableTimes);
-						}
-					}
-					else {
-						C1AID = msg.getSender();
-						toList(msg.getContent(), C1UnavailableTimes);
-					}
-					
-					if((C1AID != null) && (C2AID != null) && (C3AID != null) && (C4AID != null) && (C5AID != null) && (C6AID != null) && (runTime == 0)) {
-						runTime++;
-						
-						scheduleCars();
-						
-						System.out.println("\n");
-						
-						System.out.println(Car1ChargeTimes);
-						System.out.println(Car2ChargeTimes);
-						System.out.println(Car3ChargeTimes);
-						System.out.println(Car4ChargeTimes);
-						System.out.println(Car5ChargeTimes);
-						System.out.println(Car6ChargeTimes);
-						
-						ACLMessage msg1=new ACLMessage(ACLMessage.INFORM);
-						msg1.setContent("" + Car1ChargeTimes);
-						msg1.addReceiver(C1AID);
-						send(msg1);
-					}
-				}	
-			*/
 			}
 		});	
 	}
