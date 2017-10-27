@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.ui.json.JsonData;
 import cos30018.assignment.utils.Validate;
 
@@ -15,7 +14,7 @@ import cos30018.assignment.utils.Validate;
  * 
  * @author Jake
  */
-public class Environment implements JsonConvertible<JsonData>, Serializable {
+public class Environment implements Serializable {
 	private static final long serialVersionUID = 453975851283926647L;
 	private boolean isDummy;
 	private double maxGridLoad;
@@ -136,20 +135,6 @@ public class Environment implements JsonConvertible<JsonData>, Serializable {
 	 */
 	public Map<CarID, Car> getAllCars() {
 		return Collections.unmodifiableMap(cars);
-	}
-	/**
-	 * @param withCar The car to union with.
-	 * @return This object as an object that can be converted to JSON, unioned with withCar.toJson().
-	 */
-	public JsonData toJson(Car withCar) {
-		return JsonData.createConstraintUpdate(maxGridLoad, withCar.getCurrentCharge(), withCar.getChargeCapacity(), withCar.getChargePerHour(), withCar.getChargeDrainPerHour(), withCar.getUnavailableTimes());
-	}
-	/**
-	 * @param withCar The ID of the car to union with.
-	 * @return This object as an object that can be converted to JSON, unioned with withCar.toJson().
-	 */
-	public JsonData toJson(CarID withCar) {
-		return toJson(getCar(withCar));
 	}
 	/**
 	 * @return This object as an object that can be converted to JSON.

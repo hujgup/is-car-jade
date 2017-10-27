@@ -9,7 +9,6 @@ import cos30018.assignment.data.Environment;
 import cos30018.assignment.ui.http.Responder;
 import cos30018.assignment.ui.json.Json;
 import cos30018.assignment.ui.json.JsonData;
-import cos30018.assignment.ui.json.Provider;
 import cos30018.assignment.ui.json.TimetableEntryJson;
 import cos30018.assignment.utils.Validate;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -52,7 +51,7 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 		responder.respond(Response.Status.BAD_REQUEST, MIME_TYPE, generateError(err));
 	}
 	private String generateError(String err) {
-		return Provider.OBJ.toJson(new JsonError(err), JsonError.class);
+		return Json.serialize(new JsonError(err));
 	}
 	public ActionResult<List<TimetableEntryJson>> negotiateTimetable(boolean constraintsWereUpdated) {
 		return callback.apply(constraintsWereUpdated);
@@ -71,7 +70,7 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 							}
 							ActionResult<List<TimetableEntryJson>> res = negotiateTimetable(jsonData.isConstraintUpdate());
 							Validate.notNull(res, "res");
-							String resJson = Json.serialize(res);
+							String resJson = Json.serialize(res.toJson());
 							if (res.hasResult()) {
 								System.out.println("Success.");
 								responder.respond(MIME_TYPE, resJson);

@@ -1,17 +1,19 @@
 package cos30018.assignment.ui.json;
 
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 public class Json {
+	public static final Gson OBJ = new Gson();
 	private Json() {
 	}
 	public static <T> T deserialize(String json, TypeToken<T> type) {
-		return Provider.OBJ.fromJson(json, type.getType());
+		return OBJ.fromJson(json, type.getType());
 	}
 	public static <T> T deserialize(String json, Class<T> type) {
-		return Provider.OBJ.fromJson(json, type);
+		return OBJ.fromJson(json, type);
 	}
-	public static String serialize(JsonConvertible<?> c) {
-		return Provider.OBJ.toJson(c.toJson());
+	public static String serialize(Object obj) {
+		return OBJ.toJson(obj);
 	}
 }

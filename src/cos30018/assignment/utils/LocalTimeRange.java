@@ -3,7 +3,6 @@ package cos30018.assignment.utils;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.ui.json.LocalTimeBoundJson;
 import cos30018.assignment.ui.json.LocalTimeRangeJson;
 
@@ -12,7 +11,7 @@ import cos30018.assignment.ui.json.LocalTimeRangeJson;
  * 
  * @author Jake
  */
-public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Range<LocalTimeRange, LocalTime> {
+public class LocalTimeRange implements Range<LocalTimeRange, LocalTime> {
 	private static final long serialVersionUID = -2818936802648211668L;
 	static {
 		SimpleRange.registerSpecialization(LocalTime.class);
@@ -162,5 +161,6 @@ public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Rang
 		LocalTimeBoundJson lowJson = new LocalTimeBoundJson(low.getPivot(), low.isInclusive());
 		LocalTimeBoundJson highJson = new LocalTimeBoundJson(high.getPivot(), high.isInclusive());
 		return new LocalTimeRangeJson(lowJson, highJson);
+		
 	}
 }

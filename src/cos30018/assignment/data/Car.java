@@ -157,10 +157,4 @@ public class Car implements ImmutableCar {
 	public int getNegotiationOrder() {
 		return owner.getID();
 	}
-	/**
-	 * @return This object as an object that can be converted to JSON.
-	 */
-	public JsonData toJson() {
-		return JsonData.createConstraintUpdate(null, currentCharge, chargeCapacity, chargePerHour, chargeDrainPerHour, unavailableTimes);
-	}
 }

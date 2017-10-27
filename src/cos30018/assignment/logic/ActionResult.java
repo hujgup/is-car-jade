@@ -1,10 +1,9 @@
 package cos30018.assignment.logic;
 
 import com.google.gson.annotations.SerializedName;
-import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.utils.Validate;
 
-public class ActionResult<T> implements JsonConvertible<Object> {
+public class ActionResult<T> {
 	private class JsonResult {
 		@SerializedName("result")
 		private T result2;

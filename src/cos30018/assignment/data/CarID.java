@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
-import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.utils.Validate;
 import jade.core.AID;
 
@@ -14,7 +13,7 @@ import jade.core.AID;
  * 
  * @author Jake
  */
-public class CarID implements JsonConvertible<Integer>, Serializable {
+public class CarID implements Serializable {
 	private static final long serialVersionUID = -2949760205672878537L;
 	private static HashMap<Integer, AID> ids = new HashMap<>();
 	private int id;
@@ -61,9 +60,6 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 	 */
 	public AID getCar() {
 		return carAgent;
-	}
-	public Integer toJson() {
-		return id;
 	}
 	@Override
 	public int hashCode() {
