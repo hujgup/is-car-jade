@@ -224,12 +224,12 @@ public class JsonData {
 					keyStart = "unavailableTimes[" + i + "].";
 					mustSpecify(ltrj.getLowerBound(), keyStart + "lowerBound", SpecType.U_TIMES);
 					mustSpecify(ltrj.getUpperBound(), keyStart + "upperBound", SpecType.U_TIMES);
-					mustSpecify(ltrj.getLowerBound().getPivot(), keyStart + "lowerBound.pivot", SpecType.U_TIMES);
+					mustSpecify(ltrj.getLowerBound().getPivot(), keyStart + "lowerBound.value", SpecType.U_TIMES);
 					mustSpecify(ltrj.getLowerBound().getInclusive(), keyStart + "lowerBound.inclusive", SpecType.U_TIMES);
-					mustSpecify(ltrj.getLowerBound().getPivot(), keyStart + "upperBound.pivot", SpecType.U_TIMES);
+					mustSpecify(ltrj.getLowerBound().getPivot(), keyStart + "upperBound.value", SpecType.U_TIMES);
 					mustSpecify(ltrj.getLowerBound().getInclusive(), keyStart + "upperBound.inclusive", SpecType.U_TIMES);
-					isTimeString(ltrj.getLowerBound().getPivot(), keyStart + "lowerBound.pivot");
-					isTimeString(ltrj.getUpperBound().getPivot(), keyStart + "upperBound.pivot");
+					isTimeString(ltrj.getLowerBound().getPivot(), keyStart + "lowerBound.value");
+					isTimeString(ltrj.getUpperBound().getPivot(), keyStart + "upperBound.value");
 					i++;
 				}
 			}
