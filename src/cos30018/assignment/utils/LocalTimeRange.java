@@ -1,7 +1,6 @@
 package cos30018.assignment.utils;
 
 import java.time.LocalTime;
-import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.ui.json.LocalTimeBoundJson;
 import cos30018.assignment.ui.json.LocalTimeRangeJson;
 
@@ -10,7 +9,7 @@ import cos30018.assignment.ui.json.LocalTimeRangeJson;
  * 
  * @author Jake
  */
-public class LocalTimeRange implements JsonConvertible<LocalTimeRangeJson>, Range<LocalTimeRange, LocalTime> {
+public class LocalTimeRange implements Range<LocalTimeRange, LocalTime> {
 	private static final long serialVersionUID = -2818936802648211668L;
 	static {
 		SimpleRange.registerSpecialization(LocalTime.class);

@@ -1,10 +1,9 @@
 package cos30018.assignment.logic;
 
 import com.google.gson.annotations.SerializedName;
-import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.utils.Validate;
 
-public class ActionResult<T extends JsonConvertible<?>> implements JsonConvertible<Object> {
+public class ActionResult<T> {
 	private class JsonResult {
 		@SerializedName("result")
 		private T result2;
@@ -25,14 +24,14 @@ public class ActionResult<T extends JsonConvertible<?>> implements JsonConvertib
 	private String error;
 	private ActionResult() {
 	}
-	public static <T extends JsonConvertible<?>> ActionResult<T> createResult(T result) {
+	public static <T> ActionResult<T> createResult(T result) {
 		Validate.notNull(result, "result");
 		ActionResult<T> res = new ActionResult<>();
 		res.result = result;
 		res.error = null;
 		return res;
 	}
-	public static <T extends JsonConvertible<?>> ActionResult<T> createError(String error) {
+	public static <T> ActionResult<T> createError(String error) {
 		Validate.notNull(error, "error");
 		Validate.notEmpty(error, "error");
 		ActionResult<T> res = new ActionResult<>();

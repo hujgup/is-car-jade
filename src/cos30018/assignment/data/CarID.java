@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
-import cos30018.assignment.ui.json.JsonConvertible;
 import cos30018.assignment.utils.Validate;
 import jade.core.AID;
 
@@ -14,26 +13,11 @@ import jade.core.AID;
  * 
  * @author Jake
  */
-public class CarID implements JsonConvertible<Integer>, Serializable {
+public class CarID implements Serializable {
 	private static final long serialVersionUID = -2949760205672878537L;
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.writeInt(id);
-		out.writeObject(carAgent);
-	}
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		id = in.readInt();
-		carAgent = (AID)in.readObject();
-		if (!ids.containsKey(carAgent)) {
-			ids.put(carAgent, id);
-		}
-		if (!carIds.containsKey(id)) {
-			carIds.put(id, this);
-		}
-	}
-	private static HashMap<AID, Integer> ids = new HashMap<>();
-	private static HashMap<Integer, CarID> carIds = new HashMap<>();
+	private static HashMap<Integer, AID> ids = new HashMap<>();
 	private int id;
-	private AID carAgent;
+	private transient AID carAgent;
 	private CarID(int id, AID carAgent) {
 		Validate.notNull(carAgent, "car");
 		this.id = id;
@@ -52,11 +36,9 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 		do {
 			// Random, but no duplicates
 			id = (int)(Math.random()*20000) + 8080;			
-		} while (carIds.containsKey(id));
-		ids.put(carAgent, id);
-		CarID res = new CarID(id, carAgent);
-		carIds.put(id, res);
-		return res;
+		} while (ids.containsKey(id));
+		ids.put(id, carAgent);
+		return new CarID(id, carAgent);
 	}
 	/**
 	 * Gets an existing CarID from its integral ID value.
@@ -65,7 +47,7 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 	 * @return The CarID corresponding to id, or null if none exists.
 	 */
 	public static CarID fromID(int id) {
-		return carIds.get(id);
+		return new CarID(id, ids.get(id));
 	}
 	/**
 	 * @return The unique ID of a car/scheduler pair.
@@ -79,17 +61,9 @@ public class CarID implements JsonConvertible<Integer>, Serializable {
 	public AID getCar() {
 		return carAgent;
 	}
-	public Integer toJson() {
-		return id;
-	}
 	@Override
 	public int hashCode() {
-		// Generated
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		result = prime * result + ((carAgent == null) ? 0 : carAgent.hashCode());
-		return result;
+		return id;
 	}
 	public boolean equals(CarID other) {
 		return id == other.id;
