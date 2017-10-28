@@ -45,7 +45,6 @@ public class CarAgent extends Agent {
 						try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 							ObjectOutputStream oos = new ObjectOutputStream(bos);
 							oos.writeBoolean(isConstraintUpdate);
-							//oos.writeObject(thisId);
 							if (isConstraintUpdate.booleanValue()) {
 								oos.writeObject(env);
 							}

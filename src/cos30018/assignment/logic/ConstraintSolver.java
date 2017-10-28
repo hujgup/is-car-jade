@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
 import cos30018.assignment.data.ImmutableCar;
@@ -83,13 +83,17 @@ public class ConstraintSolver implements Supplier<Map<CarID, List<Integer>>> {
 			}
 		};
 		Map<CarID, List<Integer>> timetable = new HashMap<>();
-		ArrayList<Integer> selfTt;
+		List<Integer> cdCanSwapTo;
+		List<Integer> cd2CanSwapTo;
 		double sum;
+		int needed;
 		int slot;
+		int min;
 		int i;
+		int j;
 		for (CarData cd : cars) {
 			System.out.println("Car " + cd.id.getID());
-			selfTt = new ArrayList<>();
+			ArrayList<Integer> selfTt = new ArrayList<>();
 			timetable.put(cd.id, selfTt);
 			for (i = 0; i < lowIndices.length; i++) {
 				slot = lowIndices[i];
@@ -110,8 +114,27 @@ public class ConstraintSolver implements Supplier<Map<CarID, List<Integer>>> {
 				}
 			}
 			if (selfTt.size() < cd.requiredChargeTime) {
-				// Unresolvable - no car takes more than it needs and always minimizes any one slot's grid load
-				System.out.println(cd.id.getID() + " => Constraints cannot be exactly satisfied. Best fit solution provided.");
+				for (CarData cd2 : cars) {
+					if (cd == cd2) {
+						break;
+					} else {
+						// Try and get cd2 to move one of its slots so that cd can use it
+						// If there exists a slot that neither cd or cd2 is taking that cd2 can swap to, swap one from cd2 to that slot and put cd there
+						final List<Integer> otherTt = timetable.get(cd2.id);
+						cdCanSwapTo = Arrays.stream(lowIndices).filter(x -> !selfTt.contains(x) && otherTt.contains(x) && isValidTime(cd, x) && slotLoads[x] - cd2.gridLoad + cd.gridLoad <= maxGridLoad).collect(Collectors.toList());
+						cd2CanSwapTo = Arrays.stream(lowIndices).filter(x -> !selfTt.contains(x) && !otherTt.contains(x) && isValidTime(cd2, x) && slotLoads[x] - cd.gridLoad + cd2.gridLoad <= maxGridLoad).collect(Collectors.toList());
+						needed = cd.requiredChargeTime - selfTt.size();
+						min = Math.min(needed, cd2CanSwapTo.size());
+						for (i = 0; i < min; i++) {
+							j = cdCanSwapTo.get(i);
+							selfTt.add(j);
+							otherTt.set(j, cd2CanSwapTo.get(i));
+						}
+					}
+					if (selfTt.size() < cd.requiredChargeTime) {
+						System.out.println(cd.id.getID() + " => Constraints cannot be exactly satisfied. Best fit solution provided.");													
+					}
+				}
 			}
 			// Sort lowIndices first by slotLoads[lowIndices[i]] value, then by lowIndices[i]
 			// This ensures that slots with the lowest grid utilization are taken first by the next car
