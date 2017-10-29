@@ -7,6 +7,7 @@ import java.util.function.Function;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
 import cos30018.assignment.ui.http.Responder;
+import cos30018.assignment.ui.json.Action;
 import cos30018.assignment.ui.json.Json;
 import cos30018.assignment.ui.json.JsonData;
 import cos30018.assignment.ui.json.TimetableEntryJson;
@@ -21,14 +22,6 @@ import fi.iki.elonen.NanoHTTPD.Response;
  */
 @SuppressWarnings("serial")
 public class UpdateServerBehaviour extends ServerBehaviour {
-	private static class JsonError {
-		private String error;
-		public JsonError(String err) {
-			error = err;
-		}
-	}
-	
-	private static final String MIME_TYPE = "application/json";
 	private Environment data;
 	private CarID id;
 	private Function<Boolean, ActionResult<List<TimetableEntryJson>>> callback;
@@ -47,12 +40,6 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 		this.id = id;
 		this.callback = messageSender;
 	}
-	private void generateError(Responder responder, String err) {
-		responder.respond(Response.Status.BAD_REQUEST, MIME_TYPE, generateError(err));
-	}
-	private String generateError(String err) {
-		return Json.serialize(new JsonError(err));
-	}
 	public ActionResult<List<TimetableEntryJson>> negotiateTimetable(boolean constraintsWereUpdated) {
 		return callback.apply(constraintsWereUpdated);
 	}
@@ -63,7 +50,7 @@ public class UpdateServerBehaviour extends ServerBehaviour {
 				if (session.getParms().containsKey("json")) {
 					try {
 						JsonData jsonData = JsonData.fromJson(session.getParms().get("json"));
-						jsonData.validate(data, id);
+						jsonData.validate(data, id, Action.UPDATE_CONSTRAINTS, Action.FORCE_NEGOTIATE);
 						try {
 							if (jsonData.isConstraintUpdate()) {
 								jsonData.updateEnvironment(data, id);

@@ -17,9 +17,19 @@ public enum Action {
 	 * Forces a new negotiation to begin.
 	 */
 	@SerializedName("negotiate")
-	FORCE_NEGOTIATE;
+	FORCE_NEGOTIATE,
+	@SerializedName("getCars")
+	GET_CARS,
+	@SerializedName("addCar")
+	ADD_CAR,
+	@SerializedName("removeCar")
+	REMOVE_CAR;
 	@Override
 	public String toString() {
-		return this == UPDATE_CONSTRAINTS ? "constraints" : "negotiate";
+		try {
+			return this.getClass().getField(this.name()).getAnnotation(SerializedName.class).value();
+		} catch (NoSuchFieldException | SecurityException e) {
+			return "Action reflection error: " + e.getMessage();
+		}
 	}
 }

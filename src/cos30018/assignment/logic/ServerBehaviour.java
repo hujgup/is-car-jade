@@ -4,8 +4,10 @@ import java.io.IOException;
 import cos30018.assignment.ui.http.BlockingRequest;
 import cos30018.assignment.ui.http.BlockingServer;
 import cos30018.assignment.ui.http.Responder;
+import cos30018.assignment.ui.json.Json;
 import cos30018.assignment.utils.Validate;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import jade.core.behaviours.CyclicBehaviour;
 
 /**
@@ -15,6 +17,14 @@ import jade.core.behaviours.CyclicBehaviour;
  */
 @SuppressWarnings("serial")
 public abstract class ServerBehaviour extends CyclicBehaviour {
+	private static class JsonError {
+		private String error;
+		public JsonError(String err) {
+			error = err;
+		}
+	}
+	
+	protected static final String MIME_TYPE = "application/json";
 	private BlockingServer server;
 	/**
 	 * Creates a new ServerBehaviour.
@@ -33,6 +43,12 @@ public abstract class ServerBehaviour extends CyclicBehaviour {
 	 * @param responder Allows responses to this request.
 	 */
 	protected abstract void handle(IHTTPSession session, Responder responder);
+	protected void generateError(Responder responder, String err) {
+		responder.respond(Response.Status.BAD_REQUEST, MIME_TYPE, generateError(err));
+	}
+	protected String generateError(String err) {
+		return Json.serialize(new JsonError(err));
+	}
 	@Override
 	public final void action() {
 		BlockingRequest req = server.block();

@@ -7,6 +7,7 @@ public class SchedulingAgent extends Agent {
 	@Override
 	protected void setup() {
 		addBehaviour(new ListenerBehaviour(this));	
+		System.out.println("Scheduling agent started.");
 	}
 		
 }

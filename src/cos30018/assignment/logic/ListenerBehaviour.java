@@ -44,50 +44,61 @@ public class ListenerBehaviour extends CyclicBehaviour {
 				response.setPerformative(ACLMessage.INFORM);
 				try (ByteArrayInputStream bis = new ByteArrayInputStream(msg.getByteSequenceContent())) {
 					ObjectInputStream ois = new ObjectInputStream(bis);
-					boolean isConstraintUpdate = ois.readBoolean();
-					if (isConstraintUpdate) {
-						Environment env2 = (Environment)ois.readObject();
-						// Flooring unavailable times to the hour
-						for (ImmutableCar car : env2.getAllCars().values()) {
-							for (LocalTimeRange range : car.getUnavailableTimes()) {
-								range.getLowerBound().getPivot().minusMinutes(range.getLowerBound().getPivot().getMinute());
-								range.getLowerBound().setInclusive(true);
-								range.getUpperBound().getPivot().minusMinutes(range.getUpperBound().getPivot().getMinute());
-								range.getUpperBound().setInclusive(true);
-							}
-						}
-						// Merging environments
-						if (env == null) {
-							env = env2;
-						} else {
-							System.out.println("Init");
-							env.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
-							System.out.println("Spec'd");
-							env2.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
-							LinkedList<Entry<CarID, Car>> toReplace = new LinkedList<>();
-							for (Entry<CarID, Car> kvp : env2.getAllCars().entrySet()) {
-								if (env.hasCar(kvp.getKey())) {
-									System.out.println("Has " + kvp.getKey().getID());
-									toReplace.add(kvp);
-								} else {
-									System.out.println("New " + kvp.getKey().getID());
-									env.addCar(kvp.getValue());
+					InformContent ic = (InformContent)ois.readObject();
+					if (ic == InformContent.ACTION) {
+						boolean isConstraintUpdate = ois.readBoolean();
+						if (isConstraintUpdate) {
+							Environment env2 = (Environment)ois.readObject();
+							// Flooring unavailable times to the hour
+							for (ImmutableCar car : env2.getAllCars().values()) {
+								for (LocalTimeRange range : car.getUnavailableTimes()) {
+									range.getLowerBound().getPivot().minusMinutes(range.getLowerBound().getPivot().getMinute());
+									range.getLowerBound().setInclusive(true);
+									range.getUpperBound().getPivot().minusMinutes(range.getUpperBound().getPivot().getMinute());
+									range.getUpperBound().setInclusive(true);
 								}
 							}
-							System.out.println("To replace");
-							toReplace.stream().forEach(x -> System.out.println(x.getKey().getID()));
-							for (Entry<CarID, Car> kvp : toReplace) {
-								env.removeCar(kvp.getKey());
-								env.addCar(kvp.getValue());
+							// Merging environments
+							if (env == null) {
+								env = env2;
+							} else {
+								System.out.println("Init");
+								env.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
+								System.out.println("Spec'd");
+								env2.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
+								LinkedList<Entry<CarID, Car>> toReplace = new LinkedList<>();
+								for (Entry<CarID, Car> kvp : env2.getAllCars().entrySet()) {
+									if (env.hasCar(kvp.getKey())) {
+										System.out.println("Has " + kvp.getKey().getID());
+										toReplace.add(kvp);
+									} else {
+										System.out.println("New " + kvp.getKey().getID());
+										env.addCar(kvp.getValue());
+									}
+								}
+								System.out.println("To replace");
+								toReplace.stream().forEach(x -> System.out.println(x.getKey().getID()));
+								for (Entry<CarID, Car> kvp : toReplace) {
+									env.removeCar(kvp.getKey());
+									env.addCar(kvp.getValue());
+								}
+								System.out.println("End");
+								env.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
 							}
-							System.out.println("End");
-							env.getAllCars().keySet().stream().forEach(x -> System.out.println(x.getID()));
 						}
-					}
-					if (env != null) {
-						writeTimetable(oos, new ConstraintSolver(env).get());
+						if (env != null) {
+							writeTimetable(oos, new ConstraintSolver(env).get());
+						} else {
+							writeError(oos, "Cannot negotiate a timetable when the environment has not been set.");								
+						}
+					} else if (ic == InformContent.REMOVE) {
+						CarID cid = CarID.fromID(ois.readInt());
+						if (env != null && env.hasCar(cid)) {
+							env.removeCar(cid);
+						}
+						oos.writeBoolean(false);
 					} else {
-						writeError(oos, "Cannot negotiate a timetable when the environment has not been set.");								
+						writeError(oos, "Unknown inform content " + ic.toString());
 					}
 				}
 			} catch (IOException | ClassNotFoundException e) {
@@ -95,6 +106,7 @@ public class ListenerBehaviour extends CyclicBehaviour {
 				writeError(oos, e.getMessage());
 			}
 			System.out.println("Sending reply");
+			oos.flush();
 			bos.flush();
 			response.setByteSequenceContent(bos.toByteArray());
 			a.send(response);

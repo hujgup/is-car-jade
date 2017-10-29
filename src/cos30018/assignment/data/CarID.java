@@ -19,9 +19,17 @@ public class CarID implements Serializable {
 	private int id;
 	private transient AID carAgent;
 	private CarID(int id, AID carAgent) {
-		Validate.notNull(carAgent, "car");
 		this.id = id;
 		this.carAgent = carAgent;
+	}
+	public static int generateID() {
+		int id;
+		do {
+			// Random, but no duplicates
+			id = (int)(Math.random()*20000) + 8081;			
+		} while (ids.containsKey(id));
+		ids.put(id, null);
+		return id;
 	}
 	/**
 	 * Creates a new CarID.
@@ -29,14 +37,10 @@ public class CarID implements Serializable {
 	 * @param carAgent The agent ID of the car agent.
 	 * @return
 	 */
-	public static CarID create(AID carAgent) {
+	public static CarID create(int id, AID carAgent) {
+		Validate.inSet(id, ids.keySet(), "id", "ids");
 		Validate.notNull(carAgent, "carAgent");
 		Validate.keyNotInMap(carAgent, ids, "carAgent");
-		int id;
-		do {
-			// Random, but no duplicates
-			id = (int)(Math.random()*20000) + 8081;			
-		} while (ids.containsKey(id));
 		ids.put(id, carAgent);
 		return new CarID(id, carAgent);
 	}

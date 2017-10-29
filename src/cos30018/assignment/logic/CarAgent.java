@@ -19,6 +19,12 @@ import jade.lang.acl.ACLMessage;
 
 @SuppressWarnings("serial")
 public class CarAgent extends Agent {
+	private CarID thisId;
+	public CarAgent() {
+	}
+	public CarID getID() {
+		return thisId;
+	}
 	private List<TimetableEntryJson> toEntryList(Map<CarID, List<Integer>> map) {
 		LinkedList<TimetableEntryJson> res = new LinkedList<>();
 		for (Entry<CarID, List<Integer>> kvp : map.entrySet()) {
@@ -30,7 +36,7 @@ public class CarAgent extends Agent {
 	public void setup() {
 		AID master = new AID("master", false);
 		Environment env = Environment.createDummyData();
-		CarID thisId = CarID.create(getAID());
+		thisId = CarID.create((int)getArguments()[0], getAID());
 		System.out.println("Port number: " + thisId.getID());
 		try {
 			addBehaviour(new UpdateServerBehaviour(env, thisId, new Function<Boolean, ActionResult<List<TimetableEntryJson>>>() {
@@ -44,10 +50,12 @@ public class CarAgent extends Agent {
 						msg.addReceiver(master);
 						try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 							ObjectOutputStream oos = new ObjectOutputStream(bos);
+							oos.writeObject(InformContent.ACTION);
 							oos.writeBoolean(isConstraintUpdate);
 							if (isConstraintUpdate.booleanValue()) {
 								oos.writeObject(env);
 							}
+							oos.flush();
 							bos.flush();
 							msg.setByteSequenceContent(bos.toByteArray());
 						}
@@ -71,6 +79,7 @@ public class CarAgent extends Agent {
 					return res;
 				}
 			}));
+			System.out.println("Car agent started.");
 		} catch (IOException e) {
 			// Agent physically can't work if this gets thrown, because it means it can't listen for comms from the UI layer
 			e.printStackTrace();

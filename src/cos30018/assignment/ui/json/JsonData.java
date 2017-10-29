@@ -1,17 +1,10 @@
 package cos30018.assignment.ui.json;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import org.chocosolver.util.tools.ArrayUtils;
+import com.google.gson.annotations.SerializedName;
 import cos30018.assignment.data.Car;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
@@ -32,6 +25,7 @@ public class JsonData {
 	
 	private static final Pattern TIME_REGEX = Pattern.compile("(?:[01]\\d|2[0-3])(?:\\:[0-5]\\d){1,2}");
 	private Action action;
+	private String id;
 	private Double maxGridLoad;
 	private Double currentCharge;
 	private Double chargeCapacity;
@@ -104,6 +98,18 @@ public class JsonData {
 	 */
 	public boolean isNegotiateCommand() {
 		return action == Action.FORCE_NEGOTIATE;
+	}
+	public boolean isCarGet() {
+		return action == Action.GET_CARS;
+	}
+	public boolean isCarAdd() {
+		return action == Action.ADD_CAR;		
+	}
+	public boolean isCarRemove() {
+		return action == Action.REMOVE_CAR;		
+	}
+	public String getID() {
+		return id;
 	}
 	/**
 	 * @return The maxGridLoad value, or null if it should remain unchanged.
@@ -190,11 +196,13 @@ public class JsonData {
 	 * 
 	 * @param isNew True if this data specifies a new car.
 	 */
-	public void validate(Environment data, CarID id) {
-		boolean isNew = !data.hasCar(id);
+	public void validate(Environment data, CarID cid, Action... allowedActions) {
 		mustSpecify(action, "action", SpecType.EMPTY);
-		if (isConstraintUpdate()) {
-			if (isNew) {
+		if (!ArrayUtils.contains(allowedActions, action)) {
+			throw new IllegalStateException("Action \"" + action + "\" is not allowed in this context.");
+		} else if (isConstraintUpdate()) {
+			neverSpecify(id, "id");
+			if (!data.hasCar(cid)) {
 				if (!isCarConstraintUpdate()) {
 					throw new IllegalStateException("Validation is assuming that this is a new car, but some constraints were undefined.");
 				}
@@ -233,13 +241,18 @@ public class JsonData {
 					i++;
 				}
 			}
-		} else if (isNegotiateCommand()) {
+		} else if (isNegotiateCommand() || isCarAdd() || isCarRemove() || isCarGet()) {
 			neverSpecify(maxGridLoad, "maxGridLoad");
 			neverSpecify(currentCharge, "currentCharge");
 			neverSpecify(chargeCapacity, "chargeCapacity");
 			neverSpecify(chargePerHour, "chargePerHour");
 			neverSpecify(chargeDrainPerHour, "chargeDrainPerHour");
 			neverSpecify(unavailableTimes, "unavailableTimes");
+			if (isCarRemove()) {
+				mustSpecify(id, "id", SpecType.ACTION);
+			} else {
+				neverSpecify(id, "id");
+			}
 		} else {
 			throw new IllegalStateException("Invalid \"action\" value: " + action + ".");
 		}
