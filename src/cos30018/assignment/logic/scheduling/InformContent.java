@@ -1,0 +1,12 @@
+package cos30018.assignment.logic.scheduling;
+
+public enum InformContent {
+	ACTION,
+	ACTION_PROPAGATE,
+	REMOVE,
+	REMOVE_PROPAGATE,
+	GET_SWAP_DATA_SEND,
+	GET_SWAP_DATA_RESULT,
+	NEXT_NEGOTIATION_SEND,
+	NEXT_NEGOTIATION_RESULT
+}

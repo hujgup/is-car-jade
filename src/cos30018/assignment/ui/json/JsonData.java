@@ -270,7 +270,7 @@ public class JsonData {
 			}
 			if (isCarConstraintUpdate()) {
 				boolean isNewCar = !data.hasCar(id);
-				Car car = isNewCar ? new Car(id, 0, Double.MIN_VALUE, Double.MIN_VALUE, 0) : data.getCar(id);
+				Car car = isNewCar ? new Car(id.getID(), 0, Double.MIN_VALUE, Double.MIN_VALUE, 0) : data.getCar(id);
 				if (isNewCar) {
 					id = car.getOwner();
 					data.addCar(car);

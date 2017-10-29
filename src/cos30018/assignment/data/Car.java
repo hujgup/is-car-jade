@@ -21,7 +21,7 @@ public class Car implements ImmutableCar {
 	// 4. Consider whether it needs to be added to the Timetable.AddResult enum and the Timetable add method logic.
 	// 5. Tell Jake about it so that he can update the JsonData object + its updateConstraints method.
 	// 6. Update constraint negotiation to consider it.
-	private CarID owner;
+	private int id;
 	private double currentCharge;
 	private double chargeCapacity;
 	private double chargePerHour;
@@ -37,9 +37,8 @@ public class Car implements ImmutableCar {
 	 * @param chargeDrainPerHour The amount of charge this car drains passively per hour (controls how often it needs charging).
 	 * @param unavailableTimes The set of times that this car cannot charge in, e.g. if it is being used to drive to work.
 	 */
-	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, double chargeDrainPerHour, List<LocalTimeRange> unavailableTimes) {
-		Validate.notNull(owner, "owner");
-		this.owner = owner;
+	public Car(int id, double currentCharge, double chargeCapacity, double chargePerHour, double chargeDrainPerHour, List<LocalTimeRange> unavailableTimes) {
+		this.id = id;
 		setCurrentCharge(currentCharge, "currentCharge");
 		setChargeCapacity(chargeCapacity, "chargeCapacity");
 		setChargePerHour(chargePerHour, "chargePerHour");
@@ -56,8 +55,8 @@ public class Car implements ImmutableCar {
 	 * @param chargeDrainPerHour The amount of charge this car drains passively per hour (controls how often it needs charging).
 	 * @param unavailableTimes The set of times that this car cannot charge in, e.g. if it is being used to drive to work.
 	 */
-	public Car(CarID owner, double currentCharge, double chargeCapacity, double chargePerHour, double chargeDrainPerHour, LocalTimeRange... unavailableTimes) {
-		this(owner, currentCharge, chargeCapacity, chargePerHour, chargeDrainPerHour, Arrays.asList(unavailableTimes));
+	public Car(int id, double currentCharge, double chargeCapacity, double chargePerHour, double chargeDrainPerHour, LocalTimeRange... unavailableTimes) {
+		this(id, currentCharge, chargeCapacity, chargePerHour, chargeDrainPerHour, Arrays.asList(unavailableTimes));
 	}
 	private void setCurrentCharge(double value, String argName) {
 		Validate.finite(value, argName);
@@ -91,7 +90,7 @@ public class Car implements ImmutableCar {
 	}
 	@Override
 	public CarID getOwner() {
-		return owner;
+		return CarID.fromID(id);
 	}
 	@Override
 	public double getCurrentCharge() {
@@ -152,9 +151,5 @@ public class Car implements ImmutableCar {
 	 */
 	public void setUnavailableTimes(List<LocalTimeRange> value) {
 		setUnavailableTimes(value, "value");
-	}
-	@Override
-	public int getNegotiationOrder() {
-		return owner.getID();
 	}
 }

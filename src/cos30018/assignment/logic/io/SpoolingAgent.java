@@ -1,4 +1,4 @@
-package cos30018.assignment.logic;
+package cos30018.assignment.logic.io;
 
 import java.io.IOException;
 import jade.core.Agent;

@@ -1,10 +1,6 @@
-package cos30018.assignment.logic;
+package cos30018.assignment.logic.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +8,13 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
+import cos30018.assignment.logic.ActionResult;
+import cos30018.assignment.logic.UpdateServerBehaviour;
+import cos30018.assignment.logic.scheduling.InformContent;
 import cos30018.assignment.ui.json.TimetableEntryJson;
+import cos30018.assignment.utils.Input;
+import cos30018.assignment.utils.Mutable;
+import cos30018.assignment.utils.Output;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -34,9 +36,9 @@ public class CarAgent extends Agent {
 	}
 	@Override
 	public void setup() {
-		AID master = new AID("master", false);
 		Environment env = Environment.createDummyData();
-		thisId = CarID.create((int)getArguments()[0], getAID());
+		Object[] args = getArguments();
+		thisId = CarID.create((int)args[0], getAID(), (AID)args[1]);
 		System.out.println("Port number: " + thisId.getID());
 		try {
 			addBehaviour(new UpdateServerBehaviour(env, thisId, new Function<Boolean, ActionResult<List<TimetableEntryJson>>>() {
@@ -44,39 +46,34 @@ public class CarAgent extends Agent {
 				@Override
 				public ActionResult<List<TimetableEntryJson>> apply(Boolean isConstraintUpdate) {
 					System.out.println(thisId.getID() + " received UI message.");
-					ActionResult<List<TimetableEntryJson>> res;
+					Mutable<ActionResult<List<TimetableEntryJson>>> res = new Mutable<>();
 					try {
-						ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-						msg.addReceiver(master);
-						try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-							ObjectOutputStream oos = new ObjectOutputStream(bos);
-							oos.writeObject(InformContent.ACTION);
+						ACLMessage msg = Output.create(thisId.getScheduler());
+						Output.write(msg, oos -> {
+							oos.writeObject(InformContent.ACTION_PROPAGATE);
 							oos.writeBoolean(isConstraintUpdate);
 							if (isConstraintUpdate.booleanValue()) {
 								oos.writeObject(env);
-							}
-							oos.flush();
-							bos.flush();
-							msg.setByteSequenceContent(bos.toByteArray());
-						}
+							}							
+						});
 						send(msg);
 						System.out.println("Awaiting response...");
 						ACLMessage response = blockingReceive();
-						try (ByteArrayInputStream bis = new ByteArrayInputStream(response.getByteSequenceContent())) {
-							ObjectInputStream ois = new ObjectInputStream(bis);
+						System.out.println("Reply received.");
+						Input.read(response, ois -> {
 							boolean isError = ois.readBoolean();
 							if (isError) {
-								res = ActionResult.createError((String)ois.readObject());
+								res.value = ActionResult.createError((String)ois.readObject());
 							} else {
-								res = ActionResult.createResult(toEntryList((Map<CarID, List<Integer>>)ois.readObject()));
+								res.value = ActionResult.createResult(toEntryList((Map<CarID, List<Integer>>)ois.readObject()));
 							}
-						}
+						});
 					} catch (IOException | ClassNotFoundException e) {
 						e.printStackTrace();
-						res = ActionResult.createError("ACL error: " + e.getMessage());
+						res.value = ActionResult.createError("ACL error: " + e.getMessage());
 					}
 					System.out.println("Got result.");
-					return res;
+					return res.value;
 				}
 			}));
 			System.out.println("Car agent started.");

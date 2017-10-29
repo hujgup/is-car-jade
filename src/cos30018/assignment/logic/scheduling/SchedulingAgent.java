@@ -1,4 +1,4 @@
-package cos30018.assignment.logic;
+package cos30018.assignment.logic.scheduling;
 
 import jade.core.Agent;
 
@@ -6,9 +6,9 @@ import jade.core.Agent;
 public class SchedulingAgent extends Agent {
 	@Override
 	protected void setup() {
-		addBehaviour(new ListenerBehaviour(this));	
+		int selfId = (int)getArguments()[0];
+		addBehaviour(new ListenerBehaviour(this, selfId));	
 		System.out.println("Scheduling agent started.");
 	}
-		
 }
 

@@ -36,11 +36,7 @@ public interface ImmutableCar extends Comparable<ImmutableCar>, Serializable {
 	 * @return The times when this car will not be able to be charged (i.e. is in use).
 	 */
 	List<LocalTimeRange> getUnavailableTimes();
-	/**
-	 * @return The intrinsic negotiation order.
-	 */
-	int getNegotiationOrder();
 	default int compareTo(ImmutableCar other) {
-		return Integer.compare(getNegotiationOrder(), other.getNegotiationOrder());
+		return Integer.compare(getOwner().getID(), other.getOwner().getID());
 	}
 }

@@ -15,7 +15,6 @@ public class MainClass {
 		AgentContainer ac = rt.createMainContainer(p);
 		ac.start(); // Blocks until container is started
 		System.out.println("Container started.");
-		ac.createNewAgent("master", "cos30018.assignment.logic.SchedulingAgent", new Object[0]).start();
-		ac.createNewAgent("spooler", "cos30018.assignment.logic.SpoolingAgent", new Object[] { ac }).start();
+		ac.createNewAgent("spooler", "cos30018.assignment.logic.io.SpoolingAgent", new Object[] { ac }).start();
 	}
 }
