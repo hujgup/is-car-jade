@@ -2,27 +2,20 @@ package cos30018.assignment.logic;
 
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.ReceiverBehaviour;
-import jade.core.behaviours.TickerBehaviour;
-import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.LocalTime;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.function.Function;
 
-import cos30018.assignment.data.Car;
 import cos30018.assignment.data.CarID;
 import cos30018.assignment.data.Environment;
 import cos30018.assignment.data.Timetable;
-import cos30018.assignment.utils.LocalTimeRange;
 import cos30018.assignment.utils.handleCarCharge;
 
 @SuppressWarnings("serial")
@@ -58,7 +51,7 @@ public class CarAgent extends Agent {
 		
 		
 		
-		// testing 
+		// testing  (changed - Jake wrote this function)
 		Environment env = Environment.createDummyData();
 		
 		
@@ -79,12 +72,28 @@ public class CarAgent extends Agent {
 			public ActionResult<Timetable> apply(Boolean isConstraintUpdate) {
 				AID dest = new AID(masterAID,AID.ISLOCALNAME);
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+				ACLMessage numHours = new ACLMessage(ACLMessage.INFORM);
 					
 					carCharge = new handleCarCharge(env);
 					unavailableTimes = carCharge.getUnTimes(carID);
 					msg.setContent(""+ unavailableTimes);
+					numHours.setContent("" + carCharge.getHours());
+					//System.out.println("The number of hours is: " + carCharge.getHours());
 					msg.addReceiver(dest);
 					send(msg);
+					send(numHours);
+					
+//					// recieve message
+//					ACLMessage response = blockingReceive();
+//					try (ByteArrayInputStream bis = new ByteArrayInputStream(response.getByteSequenceContent())) {
+//						ObjectInputStream ois = new ObjectInputStream(bis);
+//						// Map<CarID, List<Integer>>
+//						Map<CarID, List<Integer>> timetable = (Map<CarID, List<Integer>>)ois.readObject();
+//						return ActionResult.createResult(timetable);
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 
 					return ActionResult.createResult(testTimetable);
 			}
@@ -96,23 +105,6 @@ public class CarAgent extends Agent {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		addBehaviour(new TickerBehaviour(this, 3000) {
-//		    public void onTick() 
-//		    {
-//			System.out.println("We are in the ticker");
-//			ACLMessage msgRec = receive();
-//			
-//			if(msgRec!=null) {
-//				toList(msgRec.getContent(), chargeTimes);
-//				System.out.println(getLocalName() + "charge times are : ");
-//				for (int i=0; i < chargeTimes.size(); i++)
-//				{
-//					System.out.println(chargeTimes.get(i));
-//				}
-//			}
-//		    }
-//		});
 		
 		
 	 } // end of Setup

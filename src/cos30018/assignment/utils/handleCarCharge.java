@@ -31,14 +31,14 @@ public class handleCarCharge implements Serializable{
 	//private ArrayList<String> cars;
 	// hold all the hours in a day
 	private ArrayList<Integer> hoursInDay = new ArrayList<>();
-	private int hoursToCharge;
+	private double hoursToCharge;
 	// Will hold the unavailableTimes of the car
 	private ArrayList<Integer> unavaliableTimes;
 	private ArrayList<Integer> finalTimes;
 	
 	// This is going to hold all the unavilableTimes
 	private HashMap<CarID,ArrayList<Integer>> carTimes = new HashMap<CarID,ArrayList<Integer>>();
-	private int totalCapacity;
+	private double totalCapacity;
 	private int currentCharge;
 //	private int requestedTime = 5;
 //	private LocalTimeRange timeRange;
@@ -54,6 +54,9 @@ public class handleCarCharge implements Serializable{
 		env = e;
 		allCars = env.getAllCars();
 		carCollection = allCars.values();
+		car = carCollection.iterator().next();
+		totalCapacity = car.getChargeCapacity();
+		setHours(car.getCurrentCharge());
 		populateUnavaliableTimes();
 	}// end of handleCarCharge with environment
 	
@@ -87,13 +90,13 @@ public class handleCarCharge implements Serializable{
 		return hoursInDay.get(num);
 	}
 	
-	private void setHours(int current)
+	private void setHours(double current)
 	{
-		hoursToCharge = (totalCapacity - current) / 50;
+		hoursToCharge = (totalCapacity - current) / car.getChargePerHour();
 	}
 	
 	
-	public int getHours()
+	public double getHours()
 	{
 		return hoursToCharge;
 	}
